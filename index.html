@@ -586,7 +586,7 @@ const MALE_TEMPLATE = `
 
     <!-- Save button -->
     <div class="fixed bottom-0 left-0 w-full px-4 pb-6 pt-4 z-50 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none">
-        <button onclick="window.saveData()" id="saveBtn" class="save-pulse pointer-events-auto w-full max-w-md mx-auto block bg-white hover:bg-zinc-100 text-black font-bold text-sm py-3.5 rounded-xl shadow-[0_8px_32px_rgba(255,255,255,0.12)] active:scale-[0.98] transition-all font-kufi border border-white/30 flex items-center justify-center gap-2">
+        <button onclick="window.saveData()" id="saveBtn" class="save-pulse pointer-events-auto w-full max-w-md mx-auto block bg-white hover:bg-zinc-100 text-black font-bold text-sm py-3.5 rounded-2xl shadow-[0_8px_32px_rgba(255,255,255,0.12)] active:scale-[0.98] transition-all font-kufi border border-white/30 flex items-center justify-center gap-2">
             <i class="fas fa-check-circle"></i> حِفْظُ إِنْجَازِ اليَوْم
         </button>
     </div>
@@ -753,7 +753,7 @@ ${DUAA_PAGE}
 let currentUser = null;
 let currentTheme = 'male';
 
-window.addEventListener('DOMContentLoaded', () => {
+function initApp() {
     // Check if user is already logged in locally
     const user = localStorage.getItem('ramadanUserName');
     const theme = localStorage.getItem('ramadanUserTheme');
@@ -768,7 +768,14 @@ window.addEventListener('DOMContentLoaded', () => {
         ws.style.display = 'flex';
         requestAnimationFrame(() => { ws.style.opacity = '1'; });
     }
-});
+}
+
+// Safer initialization for ES modules
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+} else {
+    initApp();
+}
 
 async function fetchDataAndLoad(user, theme) {
     showLoading(true);
