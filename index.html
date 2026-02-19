@@ -252,9 +252,7 @@
 <!-- Toast -->
 <div id="toast"></div>
 
-<!-- ═══════════════════════════════════════════
-     MAIN APP CONTAINER
-═══════════════════════════════════════════ -->
+<!-- MAIN APP CONTAINER -->
 <div id="app-container" class="opacity-0 transition-opacity duration-700 min-h-screen hidden"></div>
 
 <script type="module">
@@ -750,32 +748,38 @@ ${DUAA_PAGE}
 // ═══════════════════════════════════════════
 // STATE & INIT
 // ═══════════════════════════════════════════
-let currentUser = null;
-let currentTheme = 'male';
 
+// Use a simple init function that runs immediately
 function initApp() {
-    // Check if user is already logged in locally
-    const user = localStorage.getItem('ramadanUserName');
-    const theme = localStorage.getItem('ramadanUserTheme');
+    try {
+        const user = localStorage.getItem('ramadanUserName');
+        const theme = localStorage.getItem('ramadanUserTheme');
 
-    if (user && theme) {
-        currentUser = user;
-        currentTheme = theme;
-        setupThemeSelected = theme;
-        fetchDataAndLoad(user, theme);
-    } else {
+        if (user && theme) {
+            currentUser = user;
+            currentTheme = theme;
+            setupThemeSelected = theme;
+            fetchDataAndLoad(user, theme);
+        } else {
+            const ws = document.getElementById('welcomeScreen');
+            if (ws) {
+                ws.style.display = 'flex';
+                setTimeout(() => { ws.style.opacity = '1'; }, 50);
+            }
+        }
+    } catch (e) {
+        console.error("Init App Error:", e);
+        // Fallback to show welcome screen if anything fails
         const ws = document.getElementById('welcomeScreen');
-        ws.style.display = 'flex';
-        requestAnimationFrame(() => { ws.style.opacity = '1'; });
+        if (ws) {
+            ws.style.display = 'flex';
+            setTimeout(() => { ws.style.opacity = '1'; }, 50);
+        }
     }
 }
 
-// Safer initialization for ES modules
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initApp);
-} else {
-    initApp();
-}
+// Run init immediately
+initApp();
 
 async function fetchDataAndLoad(user, theme) {
     showLoading(true);
@@ -806,9 +810,10 @@ async function fetchDataAndLoad(user, theme) {
 // ═══════════════════════════════════════════
 function showLoading(show) {
     const el = document.getElementById('loadingScreen');
-    if(show) { 
+    if (!el) return;
+    if (show) { 
         el.classList.remove('hidden'); 
-        requestAnimationFrame(()=>el.classList.remove('opacity-0')); 
+        setTimeout(()=>el.classList.remove('opacity-0'), 10); 
     } else { 
         el.classList.add('opacity-0'); 
         setTimeout(()=>el.classList.add('hidden'), 300); 
@@ -851,11 +856,16 @@ window.finishSetup = async function() {
         localStorage.setItem('ramadanUserName', name);
         localStorage.setItem('ramadanUserTheme', setupThemeSelected);
         
-        document.getElementById('welcomeScreen').style.opacity = '0';
-        setTimeout(() => {
-            document.getElementById('welcomeScreen').style.display = 'none';
+        const ws = document.getElementById('welcomeScreen');
+        if (ws) {
+            ws.style.opacity = '0';
+            setTimeout(() => {
+                ws.style.display = 'none';
+                loadApp(name, setupThemeSelected);
+            }, 400);
+        } else {
             loadApp(name, setupThemeSelected);
-        }, 400);
+        }
     } catch(e) {
         console.error(e);
         showToast('تعذر الاتصال بقاعدة البيانات. سيتم الحفظ محلياً.');
@@ -863,7 +873,8 @@ window.finishSetup = async function() {
         currentTheme = setupThemeSelected;
         localStorage.setItem('ramadanUserName', name);
         localStorage.setItem('ramadanUserTheme', setupThemeSelected);
-        document.getElementById('welcomeScreen').style.display = 'none';
+        const ws = document.getElementById('welcomeScreen');
+        if(ws) ws.style.display = 'none';
         loadApp(name, setupThemeSelected);
     } finally {
         showLoading(false);
@@ -871,20 +882,24 @@ window.finishSetup = async function() {
 };
 
 function loadApp(user, theme) {
-    const container = document.getElementById('app-container');
-    document.body.className = `min-h-screen text-zinc-100 theme-${theme}`;
-    container.innerHTML = theme === 'male' ? MALE_TEMPLATE : FEMALE_TEMPLATE;
+    try {
+        const container = document.getElementById('app-container');
+        if (!container) return;
 
-    const nameEl = document.getElementById(theme === 'male' ? 'userNameDisplayM' : 'userNameDisplayF');
-    if (nameEl) nameEl.textContent = user;
+        document.body.className = `min-h-screen text-zinc-100 theme-${theme}`;
+        container.innerHTML = theme === 'male' ? MALE_TEMPLATE : FEMALE_TEMPLATE;
 
-    initPrayersUI(theme);
-    updateUI();
+        const nameEl = document.getElementById(theme === 'male' ? 'userNameDisplayM' : 'userNameDisplayF');
+        if (nameEl) nameEl.textContent = user;
 
-    requestAnimationFrame(() => {
+        initPrayersUI(theme);
+        updateUI();
+
         container.classList.remove('hidden');
-        setTimeout(()=> container.classList.remove('opacity-0'), 10);
-    });
+        setTimeout(()=> container.classList.remove('opacity-0'), 50);
+    } catch (e) {
+        console.error("Load App Error:", e);
+    }
 }
 
 // ═══════════════════════════════════════════
