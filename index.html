@@ -4,16 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>رفيق رمضان</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Reem+Kufi:wght@500;700&family=Alexandria:wght@300;400;500;700&family=Montserrat:wght@400;600&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Confetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-    <!-- Theme Init (Runs fast) -->
+    <!-- Runs before paint: zero flash for returning users -->
     <script>
         (function() {
             const theme = localStorage.getItem('ramadanUserTheme');
@@ -51,13 +47,15 @@
                         'twinkle': 'twinkle 3s ease-in-out infinite',
                         'fade-in': 'fadeIn 0.8s ease-out forwards',
                         'slide-up': 'slideUp 0.6s ease-out forwards',
+                        'pulse-soft': 'pulseSoft 2s ease-in-out infinite',
                     },
                     keyframes: {
                         swing: { '0%': { transform: 'rotate(-5deg)' }, '100%': { transform: 'rotate(5deg)' } },
                         float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } },
                         twinkle: { '0%, 100%': { opacity: '1' }, '50%': { opacity: '0.5' } },
                         fadeIn: { '0%': { opacity: '0', transform: 'translateY(16px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
-                        slideUp: { '0%': { opacity: '0', transform: 'translateY(24px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } }
+                        slideUp: { '0%': { opacity: '0', transform: 'translateY(24px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+                        pulseSoft: { '0%, 100%': { opacity: '0.6' }, '50%': { opacity: '1' } }
                     }
                 }
             }
@@ -104,18 +102,6 @@
         .theme-option.selected { border-color:#fbbf24; background:rgba(251,191,36,0.08); }
         .theme-option.selected-f { border-color:#f0abfc; background:rgba(240,171,252,0.08); }
         .setup-input:focus { box-shadow: 0 0 0 2px rgba(251,191,36,0.3); }
-
-        /* ── LOADING ── */
-        #loadingScreen { transition: opacity 0.3s ease; }
-        .loader {
-            border: 3px solid rgba(255,255,255,0.1);
-            border-radius: 50%;
-            border-top: 3px solid #fbbf24;
-            width: 40px; height: 40px;
-            -webkit-animation: spin 1s linear infinite; /* Safari */
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* ── NAVIGATION ── */
         .nav-item { position:relative; padding-bottom:4px; transition: color 0.25s, opacity 0.25s; }
@@ -180,27 +166,51 @@
         .stagger-4 { animation: slideUp 0.5s 0.2s ease-out both; }
         .stagger-5 { animation: slideUp 0.5s 0.25s ease-out both; }
 
+        /* ── SMOOTH PAGE TRANSITIONS ── */
+        .page-view { transition: opacity 0.3s ease, transform 0.3s ease; }
+        .page-view.hidden { opacity: 0; pointer-events: none; position: absolute; top: 0; left: 0; right: 0; }
+        
         /* ── INPUT STYLES ── */
         input[type=number]::-webkit-inner-spin-button,
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
+
+        /* ── PAGES LEFT BADGE FIX ── */
         #pagesLeftBadge { display: block; }
+        
+        /* Loader Style */
+        .loader {
+            border: 3px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            border-top: 3px solid #fbbf24;
+            width: 40px; height: 40px;
+            -webkit-animation: spin 1s linear infinite; /* Safari */
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="min-h-screen text-zinc-100">
 
-<!-- LOADING SCREEN -->
-<div id="loadingScreen" class="fixed inset-0 z-[200] bg-black flex flex-col items-center justify-center hidden">
+<!-- ═══════════════════════════════════════════
+     LOADING SCREEN
+═══════════════════════════════════════════ -->
+<div id="loadingScreen" class="fixed inset-0 z-[200] bg-black flex flex-col items-center justify-center transition-opacity duration-500 hidden">
     <div class="loader mb-4"></div>
-    <p class="text-zinc-500 text-xs font-kufi">جاري الاتصال...</p>
+    <p class="text-zinc-500 text-xs font-kufi animate-pulse">جاري الاتصال بقاعدة البيانات...</p>
 </div>
 
-<!-- WELCOME SCREEN -->
+<!-- ═══════════════════════════════════════════
+     WELCOME / SETUP SCREEN
+═══════════════════════════════════════════ -->
 <div id="welcomeScreen" class="fixed inset-0 z-[100] bg-black flex-col items-center justify-center p-4" style="display:none;">
     <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-zinc-900 via-black to-black"></div>
+    
+    <!-- Subtle grid texture -->
     <div class="absolute inset-0 opacity-[0.025]" style="background-image: repeating-linear-gradient(0deg, #fff 0px, #fff 1px, transparent 1px, transparent 60px), repeating-linear-gradient(90deg, #fff 0px, #fff 1px, transparent 1px, transparent 60px);"></div>
 
     <div class="relative z-10 w-full max-w-sm">
+        <!-- Logo mark -->
         <div class="text-center mb-8">
             <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-zinc-900 border border-zinc-800 mb-5 shadow-xl">
                 <i class="fas fa-mosque text-2xl text-[#fbbf24]"></i>
@@ -219,21 +229,22 @@
             <div>
                 <label class="block text-xs font-medium text-zinc-400 mb-3 tracking-wide uppercase">الثيم</label>
                 <div class="grid grid-cols-2 gap-3">
-                    <div onclick="selectSetupTheme('male')" id="themeMale" class="theme-option selected cursor-pointer rounded-xl p-4 flex flex-col items-center gap-2 bg-zinc-900 border-2 border-transparent transition-all">
+                    <div onclick="window.selectSetupTheme('male')" id="themeMale" class="theme-option selected cursor-pointer rounded-xl p-4 flex flex-col items-center gap-2 bg-zinc-900 border-2 border-transparent transition-all">
                         <i class="fas fa-user-tie text-[#fbbf24] text-xl"></i>
                         <span class="text-xs font-bold text-zinc-300">شباب</span>
                     </div>
-                    <div onclick="selectSetupTheme('female')" id="themeFemale" class="theme-option cursor-pointer rounded-xl p-4 flex flex-col items-center gap-2 bg-zinc-900 border-2 border-transparent transition-all">
+                    <div onclick="window.selectSetupTheme('female')" id="themeFemale" class="theme-option cursor-pointer rounded-xl p-4 flex flex-col items-center gap-2 bg-zinc-900 border-2 border-transparent transition-all">
                         <i class="fas fa-user-hijab text-[#f0abfc] text-xl"></i>
                         <span class="text-xs font-bold text-zinc-300">بنات</span>
                     </div>
                 </div>
             </div>
 
-            <button onclick="finishSetup()" class="w-full bg-white text-black font-bold font-kufi py-3 rounded-xl hover:bg-zinc-100 active:scale-[0.98] transition-all text-sm tracking-wide shadow-lg mt-2">
+            <button onclick="window.finishSetup()" class="w-full bg-white text-black font-bold font-kufi py-3 rounded-xl hover:bg-zinc-100 active:scale-[0.98] transition-all text-sm tracking-wide shadow-lg mt-2">
                 ابدأ رحلتك
             </button>
         </div>
+
         <p class="text-center text-zinc-700 text-[11px] font-eng mt-6 tracking-widest uppercase">Ramadan Companion</p>
     </div>
 </div>
@@ -241,8 +252,10 @@
 <!-- Toast -->
 <div id="toast"></div>
 
-<!-- MAIN APP -->
-<div id="app-container" class="opacity-0 transition-opacity duration-700 min-h-screen"></div>
+<!-- ═══════════════════════════════════════════
+     MAIN APP CONTAINER
+═══════════════════════════════════════════ -->
+<div id="app-container" class="opacity-0 transition-opacity duration-700 min-h-screen hidden"></div>
 
 <script type="module">
 // ═══════════════════════════════════════════
@@ -252,6 +265,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebas
 import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
 
+// 🔥 إعدادات Firebase الخاصة بك مدمجة هنا 
 const firebaseConfig = {
   apiKey: "AIzaSyBtHvklnxlP7ZgTvwJrpgMz4cbWiuhq9TM",
   authDomain: "create-project-36d4c.firebaseapp.com",
@@ -259,7 +273,7 @@ const firebaseConfig = {
   storageBucket: "create-project-36d4c.firebasestorage.app",
   messagingSenderId: "384696044918",
   appId: "1:384696044918:web:f78daf55009be623b1fe57",
-  measurementId: "G-PQPQGTP0HB"
+  measurementId: "G-6Q499CKMZY"
 };
 
 let app, db, analytics;
@@ -267,13 +281,13 @@ try {
     app = initializeApp(firebaseConfig);
     db = getFirestore(app);
     analytics = getAnalytics(app);
-    console.log("🔥 Firebase Connected");
+    console.log("🔥 Firebase Connected Successfully");
 } catch (e) {
     console.error("Firebase Error:", e);
 }
 
 // ═══════════════════════════════════════════
-// CONSTANTS & STATE
+// CONSTANTS & CONFIG
 // ═══════════════════════════════════════════
 const PRAYERS_CONFIG = {
     fajr:    { label: 'الفَجْر',  fard: true,  sunnah: true  },
@@ -286,6 +300,8 @@ const PRAYERS_CONFIG = {
 
 let currentDate = new Date().toISOString().split('T')[0];
 let appData = {};
+let currentUser = null;
+let currentTheme = 'male';
 let setupThemeSelected = 'male';
 
 const FOOTER_HTML = `
@@ -308,6 +324,8 @@ const FOOTER_HTML = `
 const DUAA_PAGE = `
 <div id="duaa-view" class="hidden min-h-screen animate-fade-in">
     <div class="container mx-auto px-4 max-w-xl pt-10 pb-12 text-center">
+
+        <!-- Section header -->
         <div class="mb-10">
             <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-white/5 border border-white/8 mb-5">
                 <i class="fas fa-hands-praying text-lg opacity-70"></i>
@@ -315,10 +333,15 @@ const DUAA_PAGE = `
             <h2 class="text-2xl md:text-3xl font-amiri font-bold mb-2">دعاء للموتى</h2>
             <div class="duaa-divider mx-auto"></div>
         </div>
+
+        <!-- Duaa body -->
         <div class="font-amiri text-lg md:text-xl duaa-text space-y-8 opacity-85">
             <p class="font-bold opacity-100">اللهم اجعل هذا العمل صدقة جارية</p>
+
             <p>اللهم اجعل هذا العمل نورًا في قبورهم،<br>وراحةً لأرواحهم.</p>
+
             <div class="duaa-divider mx-auto !opacity-10"></div>
+
             <p>
                 اللهم اغفر لهم وارحمهم،<br>
                 وعافهم واعفُ عنهم،<br>
@@ -326,11 +349,15 @@ const DUAA_PAGE = `
                 واغسلهم بالماء والثلج والبرد،<br>
                 ونقّهم من الخطايا كما يُنقّى الثوب الأبيض من الدنس.
             </p>
+
             <p>
                 اللهم اجعل قبورهم روضةً من رياض الجنة،<br>
                 وارزقهم الفردوس الأعلى بغير حساب ولا سابقة عذاب.
             </p>
+
             <div class="duaa-divider mx-auto !opacity-10"></div>
+
+            <!-- Names block -->
             <div class="py-4">
                 <div class="text-sm font-kufi opacity-60 mb-4">🤍 عن أرواح</div>
                 <div class="space-y-2 font-bold text-xl md:text-2xl opacity-95">
@@ -342,27 +369,37 @@ const DUAA_PAGE = `
                 <div class="mt-1.5 text-xs opacity-40">رحمهم الله رحمةً واسعة</div>
             </div>
         </div>
+
         ${FOOTER_HTML}
     </div>
 </div>`;
 
+// ═══════════════════════════════════════════
+// TEMPLATES
+// ═══════════════════════════════════════════
 const MALE_TEMPLATE = `
+<!-- Background -->
 <div class="fixed inset-0 z-0 pointer-events-none">
     <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a1a1a] via-[#050505] to-black"></div>
     <div class="absolute top-[-15%] left-[15%] w-[350px] h-[350px] bg-amber-400/5 blur-[120px] rounded-full pointer-events-none"></div>
     <div class="absolute top-[-15%] right-[15%] w-[350px] h-[350px] bg-teal-400/4 blur-[120px] rounded-full pointer-events-none"></div>
 </div>
+
+<!-- Header + Nav -->
 <header class="relative z-30 px-6 py-5 flex justify-between items-center border-b border-white/[0.04]">
     <nav class="flex gap-6 font-kufi text-sm text-zinc-500">
-        <button onclick="toggleView('dashboard')" id="nav-dashboard" class="nav-item active text-zinc-200 hover:text-white">الرئيسية</button>
-        <button onclick="toggleView('duaa')" id="nav-duaa" class="nav-item hover:text-zinc-200">دعاء</button>
+        <button onclick="window.toggleView('dashboard')" id="nav-dashboard" class="nav-item active text-zinc-200 hover:text-white">الرئيسية</button>
+        <button onclick="window.toggleView('duaa')" id="nav-duaa" class="nav-item hover:text-zinc-200">دعاء</button>
     </nav>
     <div id="streakBadgeM" class="streak-badge hidden items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-amber-300 font-kufi">
         <i class="fas fa-fire text-amber-400 text-[10px]"></i>
         <span id="streakCountM">0</span> يوم
     </div>
 </header>
+
+<!-- Dashboard -->
 <div id="dashboard-view" class="animate-fade-in">
+    <!-- Hanging decorations -->
     <div class="fixed top-0 left-0 w-full h-56 z-20 pointer-events-none overflow-hidden">
         <div class="absolute top-0 left-[5%] animate-swing-4 origin-top"><div class="lantern-string h-10 opacity-40"></div><div class="text-amber-400/60 text-sm -mt-0.5 ml-1"><i class="fas fa-star"></i></div></div>
         <div class="absolute top-0 left-[16%] animate-swing-2 origin-top"><div class="lantern-string h-28"></div><div class="text-ramadan-gold text-4xl -mt-2 drop-shadow-[0_0_12px_rgba(251,191,36,0.5)]"><i class="fas fa-lightbulb"></i></div></div>
@@ -372,6 +409,8 @@ const MALE_TEMPLATE = `
         <div class="absolute top-0 right-[16%] animate-swing-2 origin-top"><div class="lantern-string h-32"></div><div class="text-ramadan-gold text-4xl -mt-2 drop-shadow-[0_0_12px_rgba(251,191,36,0.5)]"><i class="fas fa-kaaba"></i></div></div>
         <div class="absolute top-0 right-[5%] animate-swing-4 origin-top"><div class="lantern-string h-10 opacity-40"></div><div class="text-rose-400/60 text-sm -mt-0.5 mr-1"><i class="fas fa-star"></i></div></div>
     </div>
+
+    <!-- Header info -->
     <div class="relative z-20 pt-2 pb-6 px-4 text-center">
         <div class="animate-float inline-block mb-4 relative">
             <div class="absolute inset-0 bg-white/5 blur-2xl rounded-full"></div>
@@ -379,71 +418,108 @@ const MALE_TEMPLATE = `
         </div>
         <h1 class="font-kufi text-4xl md:text-5xl font-bold text-white mb-1.5 tracking-wide">رَفِيقُ <span class="text-zinc-500">رَمَضَان</span></h1>
         <div class="text-base font-kufi text-zinc-500 mb-6">رَمَضَانُ كَرِيمٌ يَا <span id="userNameDisplayM" class="text-zinc-200 font-bold">...</span></div>
+
+        <!-- Date navigator -->
         <div class="inline-flex items-center gap-3 bg-zinc-950/90 rounded-full px-4 py-2 border border-zinc-800 backdrop-blur-md">
-            <button onclick="changeDate(-1)" class="text-zinc-600 hover:text-white transition-colors p-1 hover:bg-white/5 rounded-full"><i class="fas fa-chevron-right text-xs"></i></button>
+            <button onclick="window.changeDate(-1)" class="text-zinc-600 hover:text-white transition-colors p-1 hover:bg-white/5 rounded-full"><i class="fas fa-chevron-right text-xs"></i></button>
             <span id="currentDateDisplay" class="font-bold text-sm text-zinc-200 min-w-[130px] text-center font-kufi">--</span>
-            <button onclick="changeDate(1)" class="text-zinc-600 hover:text-white transition-colors p-1 hover:bg-white/5 rounded-full"><i class="fas fa-chevron-left text-xs"></i></button>
+            <button onclick="window.changeDate(1)" class="text-zinc-600 hover:text-white transition-colors p-1 hover:bg-white/5 rounded-full"><i class="fas fa-chevron-left text-xs"></i></button>
         </div>
     </div>
+
+    <!-- Weekly overview strip -->
     <div class="relative z-10 px-4 mb-4 stagger-1">
         <div class="glass-panel rounded-xl px-4 py-3 flex items-center justify-between max-w-5xl mx-auto">
             <span class="text-[10px] text-zinc-600 uppercase tracking-widest font-eng">هذا الأسبوع</span>
             <div id="weeklyDots" class="flex gap-2"></div>
         </div>
     </div>
+
     <main class="relative z-10 container mx-auto px-3 md:px-4 max-w-5xl pb-28">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+            <!-- LEFT COLUMN -->
             <div class="space-y-4">
+                <!-- Prayers -->
                 <div class="glass-panel rounded-xl p-5 stagger-2">
                     <div class="flex items-center gap-3 mb-4 pb-3 border-b border-zinc-900">
-                        <div class="w-8 h-8 rounded-lg bg-amber-400/10 flex items-center justify-center"><i class="fas fa-praying-hands text-amber-400 text-sm"></i></div>
+                        <div class="w-8 h-8 rounded-lg bg-amber-400/10 flex items-center justify-center">
+                            <i class="fas fa-praying-hands text-amber-400 text-sm"></i>
+                        </div>
                         <h2 class="font-bold text-zinc-100 font-kufi">الصَّلَوَاتُ الخَمْس</h2>
                     </div>
                     <div id="prayersList" class="space-y-1"></div>
                 </div>
+
+                <!-- Habits -->
                 <div class="glass-panel rounded-xl p-5 stagger-3">
                     <div class="flex items-center gap-3 mb-4 pb-3 border-b border-zinc-900">
-                        <div class="w-8 h-8 rounded-lg bg-teal-400/10 flex items-center justify-center"><i class="fas fa-star text-teal-400 text-sm"></i></div>
+                        <div class="w-8 h-8 rounded-lg bg-teal-400/10 flex items-center justify-center">
+                            <i class="fas fa-star text-teal-400 text-sm"></i>
+                        </div>
                         <h2 class="font-bold text-zinc-100 font-kufi">العِبَادَاتُ اليَوْمِيَّة</h2>
                     </div>
+
                     <div class="mb-4">
                         <label class="block text-xs text-zinc-500 mb-2">وِرْدُ القُرْآن — عدد الصفحات</label>
-                        <div class="relative"><i class="fas fa-book-open absolute right-4 top-1/2 -translate-y-1/2 text-zinc-600 text-sm"></i><input type="number" id="quranPages" placeholder="0" class="w-full bg-black/60 border border-zinc-800 focus:border-zinc-600 text-white text-base rounded-lg py-2.5 pr-11 pl-4 focus:outline-none transition-all placeholder-zinc-800"></div>
+                        <div class="relative">
+                            <i class="fas fa-book-open absolute right-4 top-1/2 -translate-y-1/2 text-zinc-600 text-sm"></i>
+                            <input type="number" id="quranPages" placeholder="0" class="w-full bg-black/60 border border-zinc-800 focus:border-zinc-600 text-white text-base rounded-lg py-2.5 pr-11 pl-4 focus:outline-none transition-all placeholder-zinc-800">
+                        </div>
                     </div>
+
                     <div class="space-y-2">
-                        <div id="taraweehCard" onclick="toggleHabit('taraweeh')" class="habit-card cursor-pointer flex items-center justify-between p-3 rounded-lg border border-zinc-800/60 bg-zinc-900/20 hover:border-zinc-600 hover:bg-zinc-900/60 select-none">
-                            <div class="flex items-center gap-3"><div class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-500 text-xs shrink-0"><i class="fas fa-moon"></i></div><span class="font-medium text-sm text-zinc-400">صَلَاةُ التَّرَاوِيح</span></div>
+                        <div id="taraweehCard" onclick="window.toggleHabit('taraweeh')" class="habit-card cursor-pointer flex items-center justify-between p-3 rounded-lg border border-zinc-800/60 bg-zinc-900/20 hover:border-zinc-600 hover:bg-zinc-900/60 select-none">
+                            <div class="flex items-center gap-3">
+                                <div class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-500 text-xs shrink-0"><i class="fas fa-moon"></i></div>
+                                <span class="font-medium text-sm text-zinc-400">صَلَاةُ التَّرَاوِيح</span>
+                            </div>
                             <div class="check-circle w-5 h-5 rounded-full border border-zinc-700 flex items-center justify-center shrink-0"><i class="fas fa-check text-[9px] text-transparent"></i></div>
                         </div>
-                        <div id="azkarCard" onclick="toggleHabit('azkar')" class="habit-card cursor-pointer flex items-center justify-between p-3 rounded-lg border border-zinc-800/60 bg-zinc-900/20 hover:border-zinc-600 hover:bg-zinc-900/60 select-none">
-                            <div class="flex items-center gap-3"><div class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-500 text-xs shrink-0"><i class="fas fa-hands-praying"></i></div><span class="font-medium text-sm text-zinc-400">أَذْكَارُ الصَّبَاحِ وَالمَسَاء</span></div>
+                        <div id="azkarCard" onclick="window.toggleHabit('azkar')" class="habit-card cursor-pointer flex items-center justify-between p-3 rounded-lg border border-zinc-800/60 bg-zinc-900/20 hover:border-zinc-600 hover:bg-zinc-900/60 select-none">
+                            <div class="flex items-center gap-3">
+                                <div class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-500 text-xs shrink-0"><i class="fas fa-hands-praying"></i></div>
+                                <span class="font-medium text-sm text-zinc-400">أَذْكَارُ الصَّبَاحِ وَالمَسَاء</span>
+                            </div>
                             <div class="check-circle w-5 h-5 rounded-full border border-zinc-700 flex items-center justify-center shrink-0"><i class="fas fa-check text-[9px] text-transparent"></i></div>
                         </div>
-                        <div id="gymCard" onclick="toggleHabit('gym')" class="habit-card cursor-pointer flex items-center justify-between p-3 rounded-lg border border-zinc-800/60 bg-zinc-900/20 hover:border-zinc-600 hover:bg-zinc-900/60 select-none">
-                            <div class="flex items-center gap-3"><div class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-500 text-xs shrink-0"><i class="fas fa-dumbbell"></i></div><span class="font-medium text-sm text-zinc-400">رِيَاضَة / مَشْي</span></div>
+                        <div id="gymCard" onclick="window.toggleHabit('gym')" class="habit-card cursor-pointer flex items-center justify-between p-3 rounded-lg border border-zinc-800/60 bg-zinc-900/20 hover:border-zinc-600 hover:bg-zinc-900/60 select-none">
+                            <div class="flex items-center gap-3">
+                                <div class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-500 text-xs shrink-0"><i class="fas fa-dumbbell"></i></div>
+                                <span class="font-medium text-sm text-zinc-400">رِيَاضَة / مَشْي</span>
+                            </div>
                             <div class="check-circle w-5 h-5 rounded-full border border-zinc-700 flex items-center justify-center shrink-0"><i class="fas fa-check text-[9px] text-transparent"></i></div>
                         </div>
                     </div>
+
                     <div class="mt-4">
                         <label class="block text-xs text-zinc-500 mb-2">سَاعَاتُ العَمَل / المُذَاكَرَة</label>
                         <input type="number" id="workHours" placeholder="0" min="0" step="0.5" class="w-full bg-black/60 border border-zinc-800 focus:border-zinc-600 text-white rounded-lg py-2.5 px-4 focus:outline-none transition-all placeholder-zinc-800">
                     </div>
                 </div>
+
+                <!-- Benefit log -->
                 <div class="glass-panel rounded-xl p-5 stagger-4">
                     <div class="flex items-center gap-3 mb-3">
-                        <div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center"><i class="fas fa-headphones text-zinc-400 text-sm"></i></div>
+                        <div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+                            <i class="fas fa-headphones text-zinc-400 text-sm"></i>
+                        </div>
                         <h2 class="font-bold text-zinc-300 font-kufi text-sm">فَائِدَةُ اليَوْم</h2>
                     </div>
                     <div class="flex gap-2">
                         <input type="text" id="podcastInput" placeholder="عنوان الدرس أو الفائدة..." class="flex-1 bg-black/60 border border-zinc-800 focus:border-zinc-600 text-white text-sm rounded-lg py-2.5 px-3 focus:outline-none transition-all placeholder-zinc-800">
-                        <button onclick="addPodcast()" class="bg-zinc-800 hover:bg-zinc-700 text-white px-3.5 rounded-lg transition-colors border border-zinc-700 hover:border-zinc-500 active:scale-95"><i class="fas fa-plus text-sm"></i></button>
+                        <button onclick="window.addPodcast()" class="bg-zinc-800 hover:bg-zinc-700 text-white px-3.5 rounded-lg transition-colors border border-zinc-700 hover:border-zinc-500 active:scale-95"><i class="fas fa-plus text-sm"></i></button>
                     </div>
                 </div>
             </div>
+
+            <!-- RIGHT COLUMN -->
             <div class="space-y-4">
+                <!-- Quran progress -->
                 <div class="glass-panel rounded-xl p-6 text-center stagger-2">
                     <h3 class="font-bold text-zinc-100 font-kufi mb-1">خَتْمَةُ القُرْآن</h3>
                     <p class="text-zinc-600 text-xs mb-6">تَقَدُّمُك فِي الخَتْمَة الحَالِيَّة</p>
+
                     <div class="relative w-36 h-36 md:w-44 md:h-44 mx-auto mb-6">
                         <svg class="w-full h-full -rotate-90 progress-ring">
                             <circle cx="50%" cy="50%" r="45%" stroke="#1c1c1e" stroke-width="8" fill="transparent"/>
@@ -454,26 +530,41 @@ const MALE_TEMPLATE = `
                             <span id="khatmaLabel" class="text-[10px] text-zinc-500 mt-1.5 bg-zinc-900 px-2.5 py-1 rounded-full border border-zinc-800 font-kufi">الخَتْمَة 1</span>
                         </div>
                     </div>
+
                     <div class="flex justify-center gap-8">
-                        <div class="text-center"><div id="totalPagesDisplay" class="text-xl font-bold text-white font-kufi">0</div><div class="text-[10px] text-zinc-600 mt-0.5">صَفْحَة مَقْرُوءَة</div></div>
+                        <div class="text-center">
+                            <div id="totalPagesDisplay" class="text-xl font-bold text-white font-kufi">0</div>
+                            <div class="text-[10px] text-zinc-600 mt-0.5">صَفْحَة مَقْرُوءَة</div>
+                        </div>
                         <div class="w-px bg-zinc-800 self-stretch"></div>
-                        <div class="text-center"><div id="pagesLeftBadge" class="text-xl font-bold text-zinc-400 font-kufi">604</div><div class="text-[10px] text-zinc-600 mt-0.5">صَفْحَة مُتَبَقِّيَة</div></div>
+                        <div class="text-center">
+                            <div id="pagesLeftBadge" class="text-xl font-bold text-zinc-400 font-kufi">604</div>
+                            <div class="text-[10px] text-zinc-600 mt-0.5">صَفْحَة مُتَبَقِّيَة</div>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Quick stats -->
                 <div class="grid grid-cols-2 gap-3 stagger-3">
                     <div class="glass-panel p-4 rounded-xl text-center">
-                        <div class="text-[10px] text-zinc-600 mb-1.5 uppercase tracking-wide">الْتِزَامُ الفَرْض</div><div id="prayerStat" class="text-xl font-bold text-white font-kufi">0%</div>
+                        <div class="text-[10px] text-zinc-600 mb-1.5 uppercase tracking-wide">الْتِزَامُ الفَرْض</div>
+                        <div id="prayerStat" class="text-xl font-bold text-white font-kufi">0%</div>
                     </div>
                     <div class="glass-panel p-4 rounded-xl text-center">
-                        <div class="text-[10px] text-zinc-600 mb-1.5 uppercase tracking-wide">الْتِزَامُ السُّنَن</div><div id="sunnahStat" class="text-xl font-bold text-white font-kufi">0%</div>
+                        <div class="text-[10px] text-zinc-600 mb-1.5 uppercase tracking-wide">الْتِزَامُ السُّنَن</div>
+                        <div id="sunnahStat" class="text-xl font-bold text-white font-kufi">0%</div>
                     </div>
                     <div class="glass-panel p-4 rounded-xl text-center">
-                        <div class="text-[10px] text-zinc-600 mb-1.5 uppercase tracking-wide">تَرَاوِيح</div><div id="taraweehCountDisplay" class="text-xl font-bold text-white font-kufi">0</div>
+                        <div class="text-[10px] text-zinc-600 mb-1.5 uppercase tracking-wide">تَرَاوِيح</div>
+                        <div id="taraweehCountDisplay" class="text-xl font-bold text-white font-kufi">0</div>
                     </div>
                     <div class="glass-panel p-4 rounded-xl text-center">
-                        <div class="text-[10px] text-zinc-600 mb-1.5 uppercase tracking-wide">رِيَاضَة</div><div id="gymCountDisplay" class="text-xl font-bold text-white font-kufi">0</div>
+                        <div class="text-[10px] text-zinc-600 mb-1.5 uppercase tracking-wide">رِيَاضَة</div>
+                        <div id="gymCountDisplay" class="text-xl font-bold text-white font-kufi">0</div>
                     </div>
                 </div>
+
+                <!-- History log -->
                 <div class="glass-panel rounded-xl p-5 stagger-4">
                     <div class="flex items-center gap-3 mb-3">
                         <i class="fas fa-history text-zinc-600 text-sm"></i>
@@ -481,15 +572,21 @@ const MALE_TEMPLATE = `
                     </div>
                     <div id="historyLog" class="max-h-52 overflow-y-auto space-y-1.5 pr-1"></div>
                 </div>
+
                 <div class="text-center stagger-5">
-                    <button onclick="resetData()" class="text-zinc-700 hover:text-red-500 text-xs transition-colors flex items-center justify-center gap-1.5 mx-auto py-2 px-4 hover:opacity-100 opacity-50"><i class="fas fa-trash-alt"></i> تَصْفِيرُ جَمِيعِ البَيَانَات</button>
+                    <button onclick="window.resetData()" class="text-zinc-700 hover:text-red-500 text-xs transition-colors flex items-center justify-center gap-1.5 mx-auto py-2 px-4 hover:opacity-100 opacity-50">
+                        <i class="fas fa-trash-alt"></i> تَصْفِيرُ جَمِيعِ البَيَانَات
+                    </button>
                 </div>
             </div>
         </div>
+
         ${FOOTER_HTML}
     </main>
+
+    <!-- Save button -->
     <div class="fixed bottom-0 left-0 w-full px-4 pb-6 pt-4 z-50 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none">
-        <button onclick="saveData()" id="saveBtn" class="save-pulse pointer-events-auto w-full max-w-md mx-auto block bg-white hover:bg-zinc-100 text-black font-bold text-sm py-3.5 rounded-xl shadow-[0_8px_32px_rgba(255,255,255,0.12)] active:scale-[0.98] transition-all font-kufi border border-white/30 flex items-center justify-center gap-2">
+        <button onclick="window.saveData()" id="saveBtn" class="save-pulse pointer-events-auto w-full max-w-md mx-auto block bg-white hover:bg-zinc-100 text-black font-bold text-sm py-3.5 rounded-xl shadow-[0_8px_32px_rgba(255,255,255,0.12)] active:scale-[0.98] transition-all font-kufi border border-white/30 flex items-center justify-center gap-2">
             <i class="fas fa-check-circle"></i> حِفْظُ إِنْجَازِ اليَوْم
         </button>
     </div>
@@ -498,27 +595,35 @@ ${DUAA_PAGE}
 `;
 
 const FEMALE_TEMPLATE = `
+<!-- Background -->
 <div class="fixed inset-0 pointer-events-none z-0">
     <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-[#4c1d95] via-[#241245] to-[#180a33]"></div>
     <div class="absolute top-0 left-0 w-full h-full opacity-[0.035]" style="background-image: url('data:image/svg+xml,%3Csvg width=\\'60\\' height=\\'60\\' viewBox=\\'0 0 60 60\\' xmlns=\\'http://www.w3.org/2000/svg\\'%3E%3Cpath d=\\'M30 30 L60 0 L60 60 Z M0 0 L30 30 L0 60 Z\\' fill=\\'%23ffffff\\'/%3E%3C/svg%3E');"></div>
 </div>
+
+<!-- Header + Nav -->
 <header class="relative z-20 px-6 py-5 flex justify-between items-center border-b border-white/[0.04]">
     <nav class="flex gap-6 font-kufi text-sm text-purple-300">
-        <button onclick="toggleView('dashboard')" id="nav-dashboard" class="nav-item active text-purple-100 hover:text-white">الرئيسية</button>
-        <button onclick="toggleView('duaa')" id="nav-duaa" class="nav-item hover:text-purple-100">دعاء</button>
+        <button onclick="window.toggleView('dashboard')" id="nav-dashboard" class="nav-item active text-purple-100 hover:text-white">الرئيسية</button>
+        <button onclick="window.toggleView('duaa')" id="nav-duaa" class="nav-item hover:text-purple-100">دعاء</button>
     </nav>
     <div id="streakBadgeF" class="streak-badge-f hidden items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-fuchsia-300 font-kufi">
         <i class="fas fa-fire text-fuchsia-400 text-[10px]"></i>
         <span id="streakCountF">0</span> يوم
     </div>
 </header>
+
+<!-- Dashboard -->
 <div id="dashboard-view" class="animate-fade-in">
+    <!-- Decorations -->
     <div class="fixed top-0 w-full h-32 z-10 pointer-events-none flex justify-between px-4">
         <div class="relative w-10 h-32 animate-swing-1 origin-top"><div class="string h-16"></div><i class="fas fa-lightbulb text-theme-gold text-3xl absolute bottom-8 left-1/2 -translate-x-1/2 drop-shadow-[0_0_12px_rgba(252,211,77,0.5)]"></i></div>
         <div class="relative w-8 h-24 animate-swing-2 origin-top hidden xs:block"><div class="string h-12"></div><i class="fas fa-star text-theme-primary text-lg absolute bottom-7 left-1/2 -translate-x-1/2"></i></div>
         <div class="relative w-8 h-28 animate-swing-3 origin-top hidden xs:block"><div class="string h-14"></div><i class="fas fa-moon text-theme-accent text-xl absolute bottom-7 left-1/2 -translate-x-1/2"></i></div>
         <div class="relative w-10 h-28 animate-swing-1 origin-top"><div class="string h-14"></div><i class="fas fa-lightbulb text-theme-gold text-3xl absolute bottom-8 left-1/2 -translate-x-1/2 drop-shadow-[0_0_12px_rgba(252,211,77,0.5)]"></i></div>
     </div>
+
+    <!-- Header info -->
     <div class="relative z-20 pt-4 pb-5 px-4 text-center">
         <div class="animate-float inline-block mb-3 mt-4">
             <div class="absolute inset-0 bg-white/5 blur-xl rounded-full"></div>
@@ -529,50 +634,69 @@ const FEMALE_TEMPLATE = `
             رَمَضَانُ كَرِيمٌ يَا <span id="userNameDisplayF" class="text-theme-accent font-bold mr-1">...</span>
             <i class="fas fa-heart text-theme-accent text-[10px]"></i>
         </div>
+
+        <!-- Date navigator -->
         <div class="flex items-center justify-between w-full max-w-[280px] mx-auto bg-theme-surface/60 backdrop-blur-md rounded-xl p-1 border border-white/8">
-            <button onclick="changeDate(-1)" class="w-9 h-9 flex items-center justify-center rounded-lg bg-white/5 text-theme-accent hover:bg-theme-accent hover:text-white transition-all active:scale-95"><i class="fas fa-chevron-right text-xs"></i></button>
+            <button onclick="window.changeDate(-1)" class="w-9 h-9 flex items-center justify-center rounded-lg bg-white/5 text-theme-accent hover:bg-theme-accent hover:text-white transition-all active:scale-95"><i class="fas fa-chevron-right text-xs"></i></button>
             <span id="currentDateDisplay" class="font-bold text-sm text-white font-kufi min-w-[110px] text-center">--</span>
-            <button onclick="changeDate(1)" class="w-9 h-9 flex items-center justify-center rounded-lg bg-white/5 text-theme-accent hover:bg-theme-accent hover:text-white transition-all active:scale-95"><i class="fas fa-chevron-left text-xs"></i></button>
+            <button onclick="window.changeDate(1)" class="w-9 h-9 flex items-center justify-center rounded-lg bg-white/5 text-theme-accent hover:bg-theme-accent hover:text-white transition-all active:scale-95"><i class="fas fa-chevron-left text-xs"></i></button>
         </div>
     </div>
+
+    <!-- Weekly dots -->
     <div class="relative z-20 px-4 mb-3 stagger-1">
         <div class="glass-card rounded-xl px-4 py-2.5 flex items-center justify-between">
             <span class="text-[10px] text-purple-400 uppercase tracking-widest font-eng opacity-60">الأسبوع</span>
             <div id="weeklyDots" class="flex gap-2"></div>
         </div>
     </div>
+
     <main class="relative z-20 container mx-auto px-3 w-full pb-6 flex flex-col gap-3">
+        <!-- Prayers -->
         <div class="glass-card rounded-2xl p-4 stagger-2">
             <div class="flex items-center gap-2 mb-3 pb-2 border-b border-white/5">
-                <div class="w-7 h-7 rounded-lg bg-theme-accent/10 flex items-center justify-center"><i class="fas fa-mosque text-theme-accent text-xs"></i></div>
+                <div class="w-7 h-7 rounded-lg bg-theme-accent/10 flex items-center justify-center">
+                    <i class="fas fa-mosque text-theme-accent text-xs"></i>
+                </div>
                 <h2 class="text-base font-bold text-theme-primary font-kufi">الصَّلَوَاتُ الخَمْس</h2>
             </div>
             <div id="prayersList" class="space-y-2"></div>
         </div>
+
+        <!-- Habits -->
         <div class="glass-card rounded-2xl p-4 stagger-3">
             <div class="flex items-center gap-2 mb-3 pb-2 border-b border-white/5">
-                <div class="w-7 h-7 rounded-lg bg-theme-gold/10 flex items-center justify-center"><i class="fas fa-star text-theme-gold text-xs"></i></div>
+                <div class="w-7 h-7 rounded-lg bg-theme-gold/10 flex items-center justify-center">
+                    <i class="fas fa-star text-theme-gold text-xs"></i>
+                </div>
                 <h2 class="text-base font-bold text-theme-accent font-kufi">وِرْدٌ وَعِبَادَة</h2>
             </div>
+
             <div class="bg-black/20 rounded-xl p-3 mb-3 border border-white/5">
                 <label class="block text-[11px] text-purple-300 mb-1.5 font-kufi opacity-70">وِرْدُ القُرْآنِ اليَوْم — صَفْحَة</label>
-                <div class="flex items-center gap-3"><i class="fas fa-book-open text-theme-accent"></i><input type="number" id="quranPages" placeholder="0" class="w-full bg-transparent text-xl font-bold text-white placeholder-white/20 focus:outline-none text-center border-b border-white/10 focus:border-theme-accent transition-colors pb-1"></div>
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-book-open text-theme-accent"></i>
+                    <input type="number" id="quranPages" placeholder="0" class="w-full bg-transparent text-xl font-bold text-white placeholder-white/20 focus:outline-none text-center border-b border-white/10 focus:border-theme-accent transition-colors pb-1">
+                </div>
             </div>
+
             <div class="space-y-2">
-                <div id="taraweehCard" onclick="toggleHabit('taraweeh')" class="habit-card flex items-center justify-between p-3 rounded-xl border border-white/5 bg-white/5 cursor-pointer transition-all select-none">
+                <div id="taraweehCard" onclick="window.toggleHabit('taraweeh')" class="habit-card flex items-center justify-between p-3 rounded-xl border border-white/5 bg-white/5 cursor-pointer transition-all select-none">
                     <div class="flex items-center gap-3"><div class="icon-box w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-purple-300 transition-colors text-sm"><i class="fas fa-moon"></i></div><span class="habit-text font-medium text-sm font-kufi">صَلَاةُ التَّرَاوِيح</span></div>
                     <div class="check-circle w-5 h-5 rounded-full border-2 border-white/20 flex items-center justify-center transition-colors"><i class="fas fa-check text-[9px]"></i></div>
                 </div>
-                <div id="tahajjudCard" onclick="toggleHabit('tahajjud')" class="habit-card flex items-center justify-between p-3 rounded-xl border border-white/5 bg-white/5 cursor-pointer transition-all select-none">
+                <div id="tahajjudCard" onclick="window.toggleHabit('tahajjud')" class="habit-card flex items-center justify-between p-3 rounded-xl border border-white/5 bg-white/5 cursor-pointer transition-all select-none">
                     <div class="flex items-center gap-3"><div class="icon-box w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-purple-300 transition-colors text-sm"><i class="fas fa-cloud-moon"></i></div><span class="habit-text font-medium text-sm font-kufi">صَلَاةُ التَّهَجُّد</span></div>
                     <div class="check-circle w-5 h-5 rounded-full border-2 border-white/20 flex items-center justify-center transition-colors"><i class="fas fa-check text-[9px]"></i></div>
                 </div>
-                <div id="azkarCard" onclick="toggleHabit('azkar')" class="habit-card flex items-center justify-between p-3 rounded-xl border border-white/5 bg-white/5 cursor-pointer transition-all select-none">
+                <div id="azkarCard" onclick="window.toggleHabit('azkar')" class="habit-card flex items-center justify-between p-3 rounded-xl border border-white/5 bg-white/5 cursor-pointer transition-all select-none">
                     <div class="flex items-center gap-3"><div class="icon-box w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-purple-300 transition-colors text-sm"><i class="fas fa-hands-praying"></i></div><span class="habit-text font-medium text-sm font-kufi">أَذْكَارُ الصَّبَاحِ وَالمَسَاء</span></div>
                     <div class="check-circle w-5 h-5 rounded-full border-2 border-white/20 flex items-center justify-center transition-colors"><i class="fas fa-check text-[9px]"></i></div>
                 </div>
             </div>
         </div>
+
+        <!-- Stats -->
         <div class="glass-card rounded-2xl p-5 stagger-4">
             <h2 class="text-base font-bold text-white mb-4 font-kufi text-center">إِنْجَازُكِ فِي الخَتْمَة</h2>
             <div class="relative w-36 h-36 mx-auto mb-4 progress-ring">
@@ -591,6 +715,8 @@ const FEMALE_TEMPLATE = `
                 <div class="bg-white/5 rounded-xl p-2 border border-white/5"><div id="tahajjudCountDisplay" class="text-lg font-bold text-theme-accent font-kufi">0</div><div class="text-[9px] text-purple-400 mt-0.5">تَهَجُّد</div></div>
             </div>
         </div>
+
+        <!-- Podcast -->
         <div class="glass-card rounded-2xl p-4 stagger-5">
             <div class="flex items-center gap-2 mb-3">
                 <i class="fas fa-pen-fancy text-purple-400 text-sm"></i>
@@ -598,31 +724,88 @@ const FEMALE_TEMPLATE = `
             </div>
             <div class="flex gap-2 mb-3">
                 <input type="text" id="podcastInput" placeholder="سجلي هنا عنوان درس..." class="flex-1 bg-black/20 border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:border-theme-accent transition-colors placeholder-white/20">
-                <button onclick="addPodcast()" class="bg-theme-accent text-theme-bg w-10 rounded-xl flex items-center justify-center font-bold shadow-lg active:scale-95 transition-transform hover:bg-white"><i class="fas fa-plus text-sm"></i></button>
+                <button onclick="window.addPodcast()" class="bg-theme-accent text-theme-bg w-10 rounded-xl flex items-center justify-center font-bold shadow-lg active:scale-95 transition-transform hover:bg-white"><i class="fas fa-plus text-sm"></i></button>
             </div>
-            <div id="historyLog" class="space-y-1.5 max-h-36 overflow-y-auto pr-1"></div>
+            <div id="historyLog" class="space-y-1.5 max-h-36 overflow-y-auto pr-1 custom-scrollbar"></div>
         </div>
+        
         <div class="text-center">
-            <button onclick="resetData()" class="text-[10px] text-red-400/40 px-4 py-2 hover:text-red-400 transition-colors">حذف جميع البيانات</button>
+            <button onclick="window.resetData()" class="text-[10px] text-red-400/40 px-4 py-2 hover:text-red-400 transition-colors">حذف جميع البيانات</button>
         </div>
+
         ${FOOTER_HTML}
     </main>
+
+    <!-- Save button -->
     <div class="fixed bottom-0 left-0 w-full p-4 z-50 bg-gradient-to-t from-[#241245] via-[#241245]/80 to-transparent pointer-events-none pb-6">
-        <button onclick="saveData()" id="saveBtn" class="pointer-events-auto w-full max-w-sm mx-auto block bg-gradient-to-r from-theme-accent to-purple-500 text-white font-bold text-sm py-3.5 rounded-2xl shadow-[0_8px_25px_rgba(232,121,249,0.35)] active:scale-[0.98] transition-all flex items-center justify-center gap-2 font-kufi border border-white/10">
+        <button onclick="window.saveData()" id="saveBtn" class="save-pulse pointer-events-auto w-full max-w-sm mx-auto block bg-gradient-to-r from-theme-accent to-purple-500 text-white font-bold text-sm py-3.5 rounded-2xl shadow-[0_8px_25px_rgba(232,121,249,0.35)] active:scale-[0.98] transition-all flex items-center justify-center gap-2 font-kufi border border-white/10">
             <i class="fas fa-check-circle"></i> حِفْظُ إِنْجَازِكِ
         </button>
     </div>
 </div>
+
 ${DUAA_PAGE}
 `;
+
+// ═══════════════════════════════════════════
+// STATE & INIT
+// ═══════════════════════════════════════════
+let currentUser = null;
+let currentTheme = 'male';
+
+window.addEventListener('DOMContentLoaded', () => {
+    // Check if user is already logged in locally
+    const user = localStorage.getItem('ramadanUserName');
+    const theme = localStorage.getItem('ramadanUserTheme');
+
+    if (user && theme) {
+        currentUser = user;
+        currentTheme = theme;
+        setupThemeSelected = theme;
+        fetchDataAndLoad(user, theme);
+    } else {
+        const ws = document.getElementById('welcomeScreen');
+        ws.style.display = 'flex';
+        requestAnimationFrame(() => { ws.style.opacity = '1'; });
+    }
+});
+
+async function fetchDataAndLoad(user, theme) {
+    showLoading(true);
+    try {
+        if (db) {
+            const docRef = doc(db, "users", user);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                if (data.appData) appData = data.appData;
+            } else {
+                appData = JSON.parse(localStorage.getItem('ramadanTrackerData_v2') || '{}');
+            }
+        } else {
+            appData = JSON.parse(localStorage.getItem('ramadanTrackerData_v2') || '{}');
+        }
+    } catch(e) {
+        console.error("Fetch Data Error:", e);
+        appData = JSON.parse(localStorage.getItem('ramadanTrackerData_v2') || '{}');
+    } finally {
+        loadApp(user, theme);
+        showLoading(false);
+    }
+}
 
 // ═══════════════════════════════════════════
 // AUTH & FIREBASE LOGIC
 // ═══════════════════════════════════════════
 function showLoading(show) {
     const el = document.getElementById('loadingScreen');
-    if(show) { el.classList.remove('hidden'); requestAnimationFrame(()=>el.classList.remove('opacity-0')); }
-    else { el.classList.add('opacity-0'); setTimeout(()=>el.classList.add('hidden'), 300); }
+    if(show) { 
+        el.classList.remove('hidden'); 
+        requestAnimationFrame(()=>el.classList.remove('opacity-0')); 
+    } else { 
+        el.classList.add('opacity-0'); 
+        setTimeout(()=>el.classList.add('hidden'), 300); 
+    }
 }
 
 window.selectSetupTheme = function(t) {
@@ -638,14 +821,25 @@ window.finishSetup = async function() {
     showLoading(true);
     try {
         if (db) {
-            // Create in DB
-            await setDoc(doc(db, "users", name), {
-                username: name,
-                theme: setupThemeSelected,
-                createdAt: new Date().toISOString(),
-                appData: {} 
-            }, { merge: true });
+            const userRef = doc(db, "users", name);
+            const userSnap = await getDoc(userRef);
+
+            if (userSnap.exists()) {
+                const data = userSnap.data();
+                appData = data.appData || {};
+            } else {
+                appData = {};
+                await setDoc(userRef, {
+                    username: name,
+                    theme: setupThemeSelected,
+                    createdAt: new Date().toISOString(),
+                    appData: {} 
+                });
+            }
         }
+        
+        currentUser = name;
+        currentTheme = setupThemeSelected;
         
         localStorage.setItem('ramadanUserName', name);
         localStorage.setItem('ramadanUserTheme', setupThemeSelected);
@@ -657,40 +851,17 @@ window.finishSetup = async function() {
         }, 400);
     } catch(e) {
         console.error(e);
-        showToast('حدث خطأ في الاتصال');
+        showToast('تعذر الاتصال بقاعدة البيانات. سيتم الحفظ محلياً.');
+        currentUser = name;
+        currentTheme = setupThemeSelected;
+        localStorage.setItem('ramadanUserName', name);
+        localStorage.setItem('ramadanUserTheme', setupThemeSelected);
+        document.getElementById('welcomeScreen').style.display = 'none';
+        loadApp(name, setupThemeSelected);
     } finally {
         showLoading(false);
     }
 };
-
-async function checkAuth() {
-    const user = localStorage.getItem('ramadanUserName');
-    const theme = localStorage.getItem('ramadanUserTheme');
-    
-    if (user && theme) {
-        showLoading(true);
-        try {
-            if(db) {
-                const docRef = doc(db, "users", user);
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    if(data.appData) appData = data.appData;
-                }
-            }
-            loadApp(user, theme);
-        } catch(e) {
-            console.error(e);
-            loadApp(user, theme); // Offline fallback
-        } finally {
-            showLoading(false);
-        }
-    } else {
-        const ws = document.getElementById('welcomeScreen');
-        ws.style.display = 'flex';
-        requestAnimationFrame(() => { ws.style.opacity = '1'; });
-    }
-}
 
 function loadApp(user, theme) {
     const container = document.getElementById('app-container');
@@ -704,7 +875,8 @@ function loadApp(user, theme) {
     updateUI();
 
     requestAnimationFrame(() => {
-        container.classList.remove('opacity-0');
+        container.classList.remove('hidden');
+        setTimeout(()=> container.classList.remove('opacity-0'), 10);
     });
 }
 
@@ -712,10 +884,10 @@ function loadApp(user, theme) {
 // SAVE LOGIC
 // ═══════════════════════════════════════════
 window.saveData = async function() {
-    const theme = localStorage.getItem('ramadanUserTheme');
-    const user = localStorage.getItem('ramadanUserName');
+    const theme = currentTheme;
+    const user = currentUser;
+    if(!user) return;
     
-    // 1. Capture State
     const prayers = {};
     let fardDone = 0;
     Object.keys(PRAYERS_CONFIG).forEach(k => {
@@ -745,23 +917,23 @@ window.saveData = async function() {
         podcasts: prevPodcasts
     };
 
-    // 2. Feedback UI
     const btn = document.getElementById('saveBtn');
     const orig = btn.innerHTML;
+    const origClass = btn.className;
+    
     btn.innerHTML = '<i class="fas fa-spinner fa-spin text-sm"></i> جاري الحفظ...';
+    btn.classList.remove('save-pulse');
     
     try {
-        // 3. Save to Firebase
-        if (db && user) {
+        if (db) {
             await updateDoc(doc(db, "users", user), {
                 appData: appData,
                 lastUpdated: new Date().toISOString()
             });
         }
-        // 4. Save Local
+        
         localStorage.setItem('ramadanTrackerData_v2', JSON.stringify(appData));
         
-        // 5. Success UI
         updateDashboard(theme);
         updateWeeklyDots(theme);
         updateStreak(theme);
@@ -771,16 +943,19 @@ window.saveData = async function() {
             triggerConfetti(isFemale ? ['#e879f9', '#fcd34d', '#fff'] : ['#fbbf24', '#2dd4bf', '#fff']);
             showToast('أحسنت! اكتملت فرائضك اليوم 🌙');
         } else {
-            showToast('تم حفظ بياناتك');
+            showToast('تم حفظ بياناتك بنجاح');
         }
     } catch(e) {
         console.error(e);
-        showToast('تم الحفظ محلياً (لا يوجد اتصال)');
+        showToast('تم الحفظ محلياً (تعذر الاتصال بقاعدة البيانات)');
         localStorage.setItem('ramadanTrackerData_v2', JSON.stringify(appData));
         btn.innerHTML = '<i class="fas fa-check text-sm"></i> تمّ الحفظ ✓';
     }
 
-    setTimeout(() => { btn.innerHTML = orig; }, 2000);
+    setTimeout(() => { 
+        btn.innerHTML = orig; 
+        btn.className = origClass;
+    }, 2000);
 };
 
 // ═══════════════════════════════════════════
@@ -791,7 +966,7 @@ window.toggleView = function(view) {
     const duaa = document.getElementById('duaa-view');
     const navD = document.getElementById('nav-dashboard');
     const navDuaa = document.getElementById('nav-duaa');
-    const theme = localStorage.getItem('ramadanUserTheme');
+    const theme = currentTheme;
 
     if (view === 'dashboard') {
         dashboard.classList.remove('hidden');
@@ -834,9 +1009,9 @@ function initPrayersUI(theme) {
             : "prayer-btn px-3 py-1.5 rounded-lg border text-xs font-medium transition-all border-zinc-800 text-zinc-600 bg-transparent hover:border-zinc-600 hover:text-zinc-300";
 
         let btns = '<div class="flex gap-1.5">';
-        if (p.fard) btns += `<button id="${key}-fard" onclick="togglePrayer(this,'${key}','fard','${theme}')" class="${btnBase}">فَرْض</button>`;
+        if (p.fard) btns += `<button id="${key}-fard" onclick="window.togglePrayer(this,'${key}','fard','${theme}')" class="${btnBase}">فَرْض</button>`;
         else btns += `<span class="text-[10px] opacity-50 self-center text-current px-1">سُنَّة</span>`;
-        if (p.sunnah) btns += `<button id="${key}-sunnah" onclick="togglePrayer(this,'${key}','sunnah','${theme}')" class="${btnBase}">سُنَّة</button>`;
+        if (p.sunnah) btns += `<button id="${key}-sunnah" onclick="window.togglePrayer(this,'${key}','sunnah','${theme}')" class="${btnBase}">سُنَّة</button>`;
         btns += '</div>';
 
         container.innerHTML += `<div class="${rowClass}"><span class="${labelClass}">${p.label}</span>${btns}</div>`;
@@ -860,7 +1035,7 @@ function applyBtnStyle(btn, active, type, theme) {
 
 window.toggleHabit = function(id) {
     const card = document.getElementById(id + 'Card');
-    const theme = localStorage.getItem('ramadanUserTheme');
+    const theme = currentTheme;
     if (theme === 'female') {
         card.classList.toggle('habit-active');
     } else {
@@ -906,7 +1081,7 @@ function updateUI() {
     document.getElementById('currentDateDisplay').textContent = dateStr;
 
     const day = appData[currentDate] || {};
-    const theme = localStorage.getItem('ramadanUserTheme');
+    const theme = currentTheme;
     const prayers = day.prayers || {};
 
     Object.keys(PRAYERS_CONFIG).forEach(k => {
@@ -993,10 +1168,6 @@ function updateStreak(theme) {
     }
 }
 
-function triggerConfetti(colors) {
-    confetti({ particleCount: 120, spread: 75, origin: { y: 0.75 }, colors });
-}
-
 window.addPodcast = function() {
     const inp = document.getElementById('podcastInput');
     const val = inp.value.trim();
@@ -1005,7 +1176,7 @@ window.addPodcast = function() {
     if (!appData[currentDate].podcasts) appData[currentDate].podcasts = [];
     appData[currentDate].podcasts.push(val);
     inp.value = '';
-    window.saveData(); // Use window.saveData to ensure we call the async version attached to window
+    window.saveData(); 
     showToast('تمت إضافة الفائدة');
 }
 
@@ -1038,7 +1209,7 @@ function updateDashboard(theme) {
     const circle = document.getElementById('khatmaCircle');
     if (circle) {
         const C = theme === 'female' ? 389 : 283;
-        const offset = C - (pct / 100) * C;
+        const offset = C - (C * pct) / 100;
         circle.style.strokeDashoffset = offset;
     }
 
@@ -1098,9 +1269,6 @@ function showToast(msg) {
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
 }
-
-// Initial check when DOM is ready (also handled by DOMContentLoaded event above)
-checkAuth();
 </script>
 </body>
 </html>
