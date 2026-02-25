@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>رفيق رمضان | رحلة روحانية</title>
+
+    <!-- ── الخطوط — المهمة أولاً ── -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;700&family=Reem+Kufi:wght@500;700&display=swap"
+        rel="stylesheet">
+    <!-- الخطوط الثانوية — محمّلة بشكل غير معيق -->
+    <link rel="preload" as="style"
+        href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Amiri+Quran&family=Alexandria:wght@400;700&display=swap"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Amiri+Quran&family=Alexandria:wght@400;700&display=swap">
+    </noscript>
+
+    <!-- ── Font Awesome ── -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    </noscript>
+
+    <!-- ── Tailwind ── -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- ── Confetti ── -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js" defer></script>
+
+    <!-- ── CSS المشتركة + القرآن ── -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/quran.css">
+
+    <!-- ── Tailwind config ── -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['IBM Plex Sans Arabic', 'sans-serif'],
+                        alexandria: ['Alexandria', 'sans-serif'],
+                        kufi: ['Reem Kufi', 'sans-serif'],
+                        amiri: ['Amiri', 'serif'],
+                    },
+                    animation: {
+                        'swing-1': 'swing 4s ease-in-out infinite alternate',
+                        'swing-2': 'swing 5s ease-in-out infinite alternate',
+                        'float': 'float 6s ease-in-out infinite',
+                        'fade-in': 'fadeIn 0.4s ease-out forwards',
+                        'slow-glow': 'slowGlow 5s ease-in-out infinite',
+                        'pop': 'pop 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards',
+                    },
+                    keyframes: {
+                        swing: { '0%': { transform: 'rotate(-4deg)' }, '100%': { transform: 'rotate(4deg)' } },
+                        float: { '0%,100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } },
+                        fadeIn: { '0%': { opacity: '0', transform: 'translateY(6px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+                        slowGlow: { '0%,100%': { opacity: '0.4' }, '50%': { opacity: '0.75' } },
+                        pop: { '0%': { transform: 'scale(0.88)' }, '60%': { transform: 'scale(1.07)' }, '100%': { transform: 'scale(1)' } },
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+
+<body>
+
+    <!-- ══ خلفيات ثابتة ══ -->
+    <canvas id="starCanvas"></canvas>
+
+    <div class="bg-orb" style="width:450px;height:450px;top:-140px;right:-120px;background:rgba(56,189,248,0.07);">
+    </div>
+    <div class="bg-orb"
+        style="width:380px;height:380px;bottom:12%;left:-140px;background:rgba(192,132,252,0.05);animation-delay:7s;">
+    </div>
+    <div class="bg-orb"
+        style="width:300px;height:300px;top:45%;right:-90px;background:rgba(56,189,248,0.04);animation-delay:3s;"></div>
+    <div class="bg-orb"
+        style="width:250px;height:250px;top:20%;left:30%;background:rgba(192,132,252,0.03);animation-delay:10s;"></div>
+
+    <div class="sparkle-star" style="top:11%;left:14%;animation-duration:3.1s;font-size:10px;">✦</div>
+    <div class="sparkle-star" style="top:17%;right:19%;animation-duration:2.4s;font-size:8px;animation-delay:1s;">✦
+    </div>
+    <div class="sparkle-star" style="top:7%;left:39%;animation-duration:4s;font-size:7px;animation-delay:.5s;">★</div>
+    <div class="sparkle-star" style="top:21%;left:59%;animation-duration:2.8s;font-size:9px;animation-delay:1.8s;">✦
+    </div>
+    <div class="sparkle-star" style="top:5%;right:34%;animation-duration:3.5s;font-size:11px;animation-delay:.3s;">✧
+    </div>
+    <div class="sparkle-star" style="top:14%;right:7%;animation-duration:2s;font-size:7px;animation-delay:2.2s;">✦</div>
+    <div class="sparkle-star" style="top:9%;left:72%;animation-duration:3.3s;font-size:8px;animation-delay:1.2s;">✦
+    </div>
+    <div class="sparkle-star" style="top:19%;left:25%;animation-duration:2.7s;font-size:6px;animation-delay:.8s;">★
+    </div>
+    <div class="sparkle-star" style="top:4%;right:52%;animation-duration:3.8s;font-size:9px;animation-delay:1.5s;">✧
+    </div>
+    <div class="sparkle-star" style="top:23%;right:42%;animation-duration:2.2s;font-size:7px;animation-delay:.2s;">✦
+    </div>
+    <div class="sparkle-star" style="top:12%;left:88%;animation-duration:3.6s;font-size:10px;animation-delay:2s;">✦
+    </div>
+    <div class="sparkle-star" style="top:8%;right:65%;animation-duration:2.9s;font-size:6px;animation-delay:1.3s;">★
+    </div>
+    <div class="sparkle-star" style="top:28%;left:45%;animation-duration:3.9s;font-size:8px;animation-delay:0.7s;">✧
+    </div>
+    <div class="sparkle-star" style="top:15%;left:82%;animation-duration:2.6s;font-size:5px;animation-delay:1.6s;">✦
+    </div>
+
+    <!-- ══ الهلال ══ -->
+    <div class="crescent-moon">
+        <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+            <defs>
+                <linearGradient id="moonGrad" x1="9" y1="10" x2="42" y2="44">
+                    <stop offset="0%" stop-color="#7dd3fc" />
+                    <stop offset="45%" stop-color="#38bdf8" />
+                    <stop offset="100%" stop-color="#c4b5fd" />
+                </linearGradient>
+            </defs>
+            <path
+                d="M42 26C42 35.94 33.94 44 24 44C17.6 44 12.1 40.6 9 35.4C11.2 36.1 13.5 36.5 15.9 36.5C26.4 36.5 35 27.9 35 17.4C35 15 34.6 12.7 33.9 10.5C38.8 13.4 42 19.3 42 26Z"
+                fill="url(#moonGrad)" opacity="0.95" />
+            <circle cx="35" cy="16" r="1.8" fill="#bae6fd" opacity="0.75" />
+            <circle cx="31" cy="12" r="1.2" fill="#e0e7ff" opacity="0.6" />
+            <circle cx="38" cy="20" r="1" fill="#c4b5fd" opacity="0.5" />
+        </svg>
+    </div>
+
+    <!-- ══ مشهد الكعبة ══ -->
+    <div class="kaaba-scene" aria-hidden="true">
+        <svg width="100%" viewBox="0 0 800 220" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax meet">
+            <path d="M0 180 Q100 120 200 150 Q300 100 400 130 Q500 90 600 140 Q700 110 800 150 L800 220 L0 220 Z"
+                fill="white" opacity="0.3" />
+            <rect x="0" y="200" width="800" height="20" fill="white" opacity="0.4" />
+            <rect x="100" y="60" width="14" height="140" fill="white" />
+            <polygon points="107,40 100,65 114,65" fill="white" />
+            <rect x="104" y="38" width="6" height="8" fill="white" />
+            <rect x="240" y="80" width="12" height="120" fill="white" />
+            <polygon points="246,62 240,82 252,82" fill="white" />
+            <rect x="243" y="60" width="6" height="8" fill="white" />
+            <rect x="548" y="80" width="12" height="120" fill="white" />
+            <polygon points="554,62 548,82 560,82" fill="white" />
+            <rect x="551" y="60" width="6" height="8" fill="white" />
+            <rect x="686" y="60" width="14" height="140" fill="white" />
+            <polygon points="693,40 686,65 700,65" fill="white" />
+            <rect x="690" y="38" width="6" height="8" fill="white" />
+            <rect x="330" y="100" width="140" height="110" fill="white" />
+            <rect x="330" y="100" width="140" height="18" fill="white" opacity="0.6" />
+            <rect x="385" y="148" width="30" height="62" fill="white" opacity="0.4" />
+            <ellipse cx="400" cy="98" rx="30" ry="12" fill="white" opacity="0.5" />
+            <rect x="170" y="155" width="460" height="55" fill="white" opacity="0.5" />
+        </svg>
+    </div>
+
+    <div class="fixed bottom-0 left-0 right-0 h-20 pointer-events-none z-[1]"
+        style="background:linear-gradient(to top,rgba(0,0,0,0.45) 0%,transparent 100%);"></div>
+
+    <!-- ══ الفوانيس ══ -->
+    <div class="fixed top-0 left-0 w-full h-28 pointer-events-none z-[65]" aria-hidden="true">
+        <div class="lantern-svg animate-swing-1" style="left:7%">
+            <svg viewBox="0 0 50 100">
+                <path d="M25 0 L25 25 M15 25 L35 25 L40 55 L25 75 L10 55 Z" fill="rgba(56,189,248,0.08)"
+                    stroke="#38bdf8" stroke-width="1.5" />
+                <circle cx="25" cy="50" r="4" fill="#38bdf8" class="animate-pulse" />
+            </svg>
+        </div>
+        <div class="lantern-svg animate-swing-2 hidden md:block" style="left:34%">
+            <svg viewBox="0 0 50 100">
+                <path d="M25 0 L25 40 M10 40 L40 40 L45 70 L25 90 L5 70 Z" fill="rgba(192,132,252,0.08)"
+                    stroke="#c084fc" stroke-width="2" />
+                <circle cx="25" cy="65" r="3" fill="#c084fc" class="animate-pulse" />
+            </svg>
+        </div>
+        <div class="lantern-svg animate-swing-1 hidden md:block" style="right:34%">
+            <svg viewBox="0 0 50 100">
+                <path d="M25 0 L25 40 M10 40 L40 40 L45 70 L25 90 L5 70 Z" fill="rgba(192,132,252,0.08)"
+                    stroke="#c084fc" stroke-width="2" />
+                <circle cx="25" cy="65" r="3" fill="#c084fc" class="animate-pulse" />
+            </svg>
+        </div>
+        <div class="lantern-svg animate-swing-2" style="right:7%">
+            <svg viewBox="0 0 50 100">
+                <path d="M25 0 L25 25 M15 25 L35 25 L40 55 L25 75 L10 55 Z" fill="rgba(56,189,248,0.08)"
+                    stroke="#38bdf8" stroke-width="2" />
+                <circle cx="25" cy="50" r="4" fill="#38bdf8" class="animate-pulse" />
+            </svg>
+        </div>
+    </div>
+
+    <!-- ══ شاشة التحميل ══ -->
+    <div id="loadingScreen"
+        class="fixed inset-0 z-[200] flex flex-col items-center justify-center transition-opacity duration-600"
+        style="background: #000000;">
+        <div class="relative">
+            <div
+                class="w-20 h-20 border-4 border-transparent border-t-sky-400 rounded-full animate-spin shadow-[0_0_32px_rgba(56,189,248,0.4)]">
+            </div>
+            <div class="absolute inset-0 w-20 h-20 border-4 border-transparent border-b-sky-400/25 rounded-full animate-spin"
+                style="animation-duration: 1.5s; animation-direction: reverse;"></div>
+        </div>
+        <p class="text-sky-300 text-lg font-amiri tracking-widest mt-6 animate-pulse">جارٍ التحميل...</p>
+        <div class="flex gap-1.5 mt-4">
+            <div class="w-2 h-2 bg-sky-400 rounded-full animate-bounce" style="animation-delay: 0s;"></div>
+            <div class="w-2 h-2 bg-sky-300/50 rounded-full animate-bounce" style="animation-delay: 0.2s;"></div>
+            <div class="w-2 h-2 bg-sky-400 rounded-full animate-bounce" style="animation-delay: 0.4s;"></div>
+        </div>
+    </div>
+
+    <!-- ══ شاشة الترحيب ══ -->
+    <div id="welcomeScreen" class="fixed inset-0 z-[100] flex-col items-center justify-center p-4 overflow-y-auto"
+        style="display:none; background:radial-gradient(ellipse at 50% 15%,rgba(56,189,248,0.06) 0%,#000000 55%);">
+        <div class="relative z-10 w-full max-w-sm mx-auto text-center py-6">
+            <div class="relative inline-flex items-center justify-center mb-5">
+                <div class="absolute w-32 h-32 bg-sky-400/10 blur-2xl rounded-full"></div>
+                <div class="absolute w-24 h-24 bg-purple-400/8 blur-3xl rounded-full"
+                    style="animation: orbPulse 6s ease-in-out infinite;"></div>
+                <div
+                    class="w-24 h-24 rounded-full bg-gradient-to-b from-[#0a0a0a] to-[#000000] border-2 border-sky-400/35 flex items-center justify-center shadow-[0_0_44px_rgba(56,189,248,0.2),0_0_60px_rgba(56,189,248,0.06)] relative z-10 animate-float">
+                    <svg width="54" height="50" viewBox="0 0 60 56" fill="none">
+                        <rect x="8" y="18" width="44" height="34" rx="1" fill="#38bdf8" opacity="0.85" />
+                        <rect x="8" y="18" width="44" height="8" fill="#0ea5e9" opacity="0.7" />
+                        <rect x="8" y="22" width="44" height="2" fill="#bae6fd" opacity="0.5" />
+                        <rect x="23" y="36" width="14" height="16" rx="1" fill="#0c4a6e" opacity="0.8" />
+                        <polygon points="8,18 30,4 52,18" fill="#0284c7" opacity="0.95" />
+                        <rect x="27" y="0" width="6" height="6" rx="1" fill="#38bdf8" />
+                    </svg>
+                </div>
+            </div>
+            <h1 class="text-5xl font-amiri font-bold text-white mb-1.5 leading-tight">رفيقُ رمضان</h1>
+            <p class="text-sky-300/65 text-sm font-kufi mb-7 tracking-wide">أهلاً بك في رحلتك الروحانية · ١٤٤٦هـ</p>
+
+            <div
+                class="bg-[#050505]/95 backdrop-blur-xl border border-sky-400/12 rounded-[1.75rem] p-5 space-y-5 shadow-[0_18px_54px_rgba(0,0,0,0.8),0_0_30px_rgba(56,189,248,0.04)]">
+                <div class="space-y-1.5 text-right">
+                    <label class="text-xs text-sky-400/75 font-bold font-kufi tracking-wider">اسمُك الكريم</label>
+                    <div class="relative">
+                        <input type="text" id="setupName" placeholder="كيف نُناديك؟"
+                            class="w-full bg-[#0a0a0a] border border-sky-400/18 rounded-2xl px-4 py-3.5 text-center text-white focus:outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-400/12 transition-all font-bold text-lg font-amiri"
+                            onkeydown="if(event.key==='Enter') window.finishSetup()">
+                        <div
+                            class="absolute left-3.5 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-sky-400 rounded-full opacity-50 animate-pulse">
+                        </div>
+                    </div>
+                </div>
+                <div class="space-y-2.5 text-right">
+                    <label class="text-xs text-sky-400/75 font-bold font-kufi tracking-wider">اختَر واجهتك</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div onclick="window.selectSetupTheme('male')" id="themeMale"
+                            class="setup-theme-card cursor-pointer rounded-2xl p-4 flex flex-col items-center gap-2.5 border-2 border-sky-400/25 bg-gradient-to-b from-[#0a0a0a] to-[#000000] transition-all active:scale-95 selected-male">
+                            <div
+                                class="w-12 h-12 rounded-2xl bg-sky-400/10 flex items-center justify-center border border-sky-400/25">
+                                <svg width="28" height="28" viewBox="0 0 30 30" fill="none">
+                                    <circle cx="15" cy="8" r="5" fill="#38bdf8" opacity="0.9" />
+                                    <path d="M6 26c0-5 4-9 9-9s9 4 9 9" stroke="#38bdf8" stroke-width="2.5"
+                                        stroke-linecap="round" fill="none" opacity="0.9" />
+                                    <rect x="11" y="16" width="8" height="6" rx="2" fill="#38bdf8" opacity="0.7" />
+                                </svg>
+                            </div>
+                            <div><span class="text-sm font-bold font-kufi text-white block">رجالي</span><span
+                                    class="text-xs text-sky-300/50 font-amiri">سماوي</span></div>
+                        </div>
+                        <div onclick="window.selectSetupTheme('female')" id="themeFemale"
+                            class="setup-theme-card cursor-pointer rounded-2xl p-4 flex flex-col items-center gap-2.5 border-2 border-fuchsia-500/22 bg-gradient-to-b from-[#0a0508] to-[#000000] transition-all active:scale-95">
+                            <div
+                                class="w-12 h-12 rounded-2xl bg-fuchsia-500/12 flex items-center justify-center border border-fuchsia-500/28">
+                                <svg width="28" height="28" viewBox="0 0 30 30" fill="none">
+                                    <circle cx="15" cy="8" r="4.5" fill="#f0abfc" opacity="0.9" />
+                                    <path d="M8 14 Q8 8 15 7 Q22 8 22 14 Q22 18 15 19 Q8 18 8 14Z" fill="#d946ef"
+                                        opacity="0.7" />
+                                    <path d="M7 26c0-5 4-8 8-8s8 3 8 8" stroke="#f0abfc" stroke-width="2.5"
+                                        stroke-linecap="round" fill="none" opacity="0.9" />
+                                </svg>
+                            </div>
+                            <div><span class="text-sm font-bold font-kufi text-white block">بناتي</span><span
+                                    class="text-xs text-fuchsia-400/50 font-amiri">وردي</span></div>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="window.finishSetup()"
+                    class="w-full bg-gradient-to-r from-sky-500 to-sky-600 text-white font-extrabold font-kufi py-3.5 rounded-2xl shadow-[0_0_22px_rgba(56,189,248,0.35)] transition-all active:scale-95 text-lg border-b-4 border-sky-700 mt-1">
+                    ابدأ الرحلةَ المباركة ✨
+                </button>
+            </div>
+            <p class="text-white/18 text-xs font-amiri mt-5">رَمَضَانُ شَهْرُ الْقُرْآن</p>
+        </div>
+    </div>
+
+    <!-- ══ شريط الذكر العلوي ══ -->
+    <div class="fixed z-[70] pointer-events-none" style="top:10px;left:58px;right:58px;">
+        <div id="dhikrOverlay"
+            class="dhikr-float mx-auto max-w-md rounded-2xl px-4 py-3 flex items-center gap-3 relative overflow-hidden">
+            <div
+                class="absolute inset-0 bg-gradient-to-r from-transparent via-white/3 to-transparent animate-slow-glow pointer-events-none">
+            </div>
+            <i class="fas fa-star-and-crescent text-sky-300/65 text-base animate-pulse relative z-10 flex-shrink-0"></i>
+            <span id="dhikrText"
+                class="text-lg font-bold font-amiri text-white leading-snug flex-1 text-center relative z-10">لَا إِلَهَ
+                إِلَّا اللَّه</span>
+            <i class="fas fa-star text-purple-300/55 text-sm animate-pulse relative z-10 flex-shrink-0"></i>
+        </div>
+    </div>
+
+    <!-- ══ Toast ══ -->
+    <div id="toast"
+        class="bg-[#050505]/96 backdrop-blur-xl text-sky-200 px-6 py-3.5 rounded-2xl shadow-[0_8px_28px_rgba(0,0,0,0.85)] border border-sky-400/20 font-bold text-base font-kufi text-center">
+    </div>
+
+    <!-- ══ زر الحفظ العائم ══ -->
+    <div id="stickySave" class="sticky-save">
+        <button onclick="window.saveData()" id="stickySaveBtn"
+            class="flex items-center gap-2 px-7 py-3 rounded-2xl font-bold font-kufi text-base shadow-2xl backdrop-blur-xl transition-all active:scale-95">
+            <span class="unsaved-dot"></span>
+            <span>حفظ التغييرات</span>
+        </button>
+    </div>
+
+    <!-- ══ حاوية التطبيق الرئيسية ══ -->
+    <div id="app-container" class="hidden opacity-0 transition-opacity duration-500 min-h-dvh"
+        style="padding-top:76px;"></div>
+
+
+    <!-- ════════════════════════════════════════
+     JS الرئيسي — يستدعي كل الصفحات
+     ════════════════════════════════════════ -->
+    <script type="module">
+        // ─── استيراد Firebase ─────────────────────────────
+        import { db, doc, getDoc, setDoc, updateDoc } from './js/firebase.js';
+
+        // ─── استيراد الحالة المشتركة ──────────────────────
+        import { state, PRAYERS_CONFIG, DHIKR_LIST, showToast, markUnsaved, markSaved, calcJuzPages } from './js/state.js';
+
+        // ─── استيراد الصفحات ──────────────────────────────
+        import {
+            getDashboardHTML, initPrayersUI, updateDashboardUI,
+            refreshDashKhatma, renderLessonsList, saveData, autoSave
+        } from './js/dashboard.js';
+
+        import {
+            getAzkarHTML, switchAzkarTab, renderAzkarList, tapAzkar, markAllAzkarDone
+        } from './js/azkar.js';
+
+        import {
+            getQuranHTML, initQuran, loadSurah,
+            openFullscreenMushaf, closeFullscreenMushaf,
+            fsPrevPage, fsNextPage, setQuranLogMode, adjustQuranPages
+        } from './js/quran.js';
+
+        import {
+            getDuaaHTML, renderPrayerTimes, selectCity, copyDua, cleanupDuaaTimers
+        } from './js/duaa.js';
+
+        // ════════════════════════════════════════
+        //  تدوير الذكر (cached reference)
+        // ════════════════════════════════════════
+        let dhikrIndex = 0;
+        let dhikrEl = null;
+        function rotateDhikr() {
+            if (!dhikrEl) dhikrEl = document.getElementById('dhikrText');
+            if (!dhikrEl) return;
+            dhikrEl.style.transition = 'opacity .38s ease, transform .38s ease';
+            dhikrEl.style.opacity = '0';
+            dhikrEl.style.transform = 'translateY(-10px)';
+            setTimeout(() => {
+                dhikrIndex = (dhikrIndex + 1) % DHIKR_LIST.length;
+                dhikrEl.textContent = DHIKR_LIST[dhikrIndex];
+                dhikrEl.style.transition = 'none';
+                dhikrEl.style.transform = 'translateY(8px)';
+                dhikrEl.style.opacity = '0';
+                requestAnimationFrame(() => requestAnimationFrame(() => {
+                    dhikrEl.style.transition = 'opacity .42s ease, transform .42s ease';
+                    dhikrEl.style.opacity = '1';
+                    dhikrEl.style.transform = 'translateY(0)';
+                }));
+            }, 400);
+        }
+        setInterval(rotateDhikr, 4000);
+
+        // ════════════════════════════════════════
+        //  شريط التنقل السفلي
+        // ════════════════════════════════════════
+        function getNavbarHTML() {
+            const m = state.currentTheme === 'male';
+            const bg = m ? "bg-[#050505]/97 border-sky-400/10" : "bg-[#100620]/96 border-fuchsia-500/12";
+            const col = m ? "text-sky-400" : "text-fuchsia-400";
+            const ico = m ? "fa-fire text-sky-300" : "fa-heart text-fuchsia-400";
+
+            return `
+    <header class="fixed bottom-0 left-0 right-0 z-50 ${bg} backdrop-blur-2xl border-t pb-safe shadow-[0_-6px_20px_rgba(0,0,0,0.65)]">
+        <nav class="flex justify-around items-center max-w-md mx-auto font-kufi text-xs font-bold px-1 py-2">
+            <button onclick="window.navigateTo('dashboard')" id="nav-dashboard" class="nav-item ${col} transition-colors">
+                <i class="fas fa-home text-xl"></i><span>الرئيسية</span>
+            </button>
+            <button onclick="window.navigateTo('quran')" id="nav-quran" class="nav-item text-white/45 hover:text-white transition-colors">
+                <i class="fas fa-book-quran text-xl"></i><span>القرآن</span>
+            </button>
+            <button onclick="window.navigateTo('azkar')" id="nav-azkar" class="nav-item text-white/45 hover:text-white transition-colors">
+                <i class="fas fa-hands-praying text-xl"></i><span>الأذكار</span>
+            </button>
+            <button onclick="window.navigateTo('duaa')" id="nav-duaa" class="nav-item text-white/45 hover:text-white transition-colors">
+                <i class="fas fa-kaaba text-xl"></i><span>الدعاء</span>
+            </button>
+            <div class="flex flex-col items-center gap-0.5 text-white/55 px-1">
+                <div class="flex items-center gap-1">
+                    <i class="fas ${ico} text-base"></i>
+                    <span class="font-bold text-white font-amiri text-lg leading-none" id="streakCount">0</span>
+                </div>
+                <span class="text-[9px] text-white/28">يوم</span>
+            </div>
+        </nav>
+    </header>`;
+        }
+
+        // ════════════════════════════════════════
+        //  التنقل بين الصفحات
+        // ════════════════════════════════════════
+        let currentView = 'dashboard';
+
+        window.navigateTo = (view) => {
+            currentView = view;
+            ['dashboard', 'quran', 'azkar', 'duaa'].forEach(v => {
+                document.getElementById(`${v}-view`)?.classList.add('hidden');
+            });
+
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('text-sky-400', 'text-fuchsia-400');
+                el.classList.add('text-white/45');
+            });
+
+            document.getElementById(`${view}-view`)?.classList.remove('hidden');
+
+            const col = state.currentTheme === 'male' ? 'text-sky-400' : 'text-fuchsia-400';
+            const navEl = document.getElementById(`nav-${view}`);
+            if (navEl) { navEl.classList.remove('text-white/45'); navEl.classList.add(col); }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // تهيئة الصفحات عند الحاجة + تنظيف
+            if (view !== 'duaa') cleanupDuaaTimers(); // stop iftar countdown when not on duaa
+            if (view === 'dashboard') setTimeout(() => updateDashboardUI(), 50);
+            if (view === 'duaa') setTimeout(() => selectCity('alex'), 50);
+            if (view === 'quran') setTimeout(() => initQuran(), 50);
+            if (view === 'azkar') setTimeout(() => renderAzkarList('sabah'), 50);
+        };
+
+        // ════════════════════════════════════════
+        //  بناء التطبيق
+        // ════════════════════════════════════════
+        function buildApp() {
+            const container = document.getElementById('app-container');
+            document.body.className = `min-h-dvh text-zinc-100 theme-${state.currentTheme}`;
+
+            container.innerHTML =
+                getNavbarHTML() +
+                getDashboardHTML() +
+                getQuranHTML() +
+                getAzkarHTML() +
+                getDuaaHTML();
+
+            initPrayersUI();
+            updateDashboardUI();
+            document.getElementById('loadingScreen')?.classList.add('hidden');
+            container.classList.remove('hidden');
+            requestAnimationFrame(() => container.classList.add('opacity-100'));
+        }
+
+        // ════════════════════════════════════════
+        //  تحميل البيانات من Firebase
+        // ════════════════════════════════════════
+        async function fetchData() {
+            try {
+                const snap = await getDoc(doc(db, "users", state.currentUser));
+                if (snap.exists()) {
+                    const d = snap.data();
+                    state.appData = d.appData || {};
+                    state.currentTheme = d.theme || state.currentTheme;
+                } else {
+                    const ls = localStorage.getItem('ramadanTrackerData_v5');
+                    if (ls) state.appData = JSON.parse(ls);
+                }
+            } catch {
+                const ls = localStorage.getItem('ramadanTrackerData_v5');
+                if (ls) try { state.appData = JSON.parse(ls); } catch { }
+            }
+            buildApp();
+        }
+
+        // ════════════════════════════════════════
+        //  window exports — الدوال العامة
+        // ════════════════════════════════════════
+
+        // ── إعداد المستخدم ──────────────────────
+        window.selectSetupTheme = (t) => {
+            document.getElementById('themeMale')?.classList.remove('selected-male', 'selected-female');
+            document.getElementById('themeFemale')?.classList.remove('selected-male', 'selected-female');
+            if (t === 'male') document.getElementById('themeMale')?.classList.add('selected-male');
+            else document.getElementById('themeFemale')?.classList.add('selected-female');
+            state.currentTheme = t;
+        };
+
+        window.finishSetup = async () => {
+            const name = document.getElementById('setupName')?.value?.trim();
+            if (!name) return showToast('الاسم يزين تطبيقنا.. فضلاً أدخله');
+            state.currentUser = name;
+            localStorage.setItem('ramadanUserName', name);
+            localStorage.setItem('ramadanUserTheme', state.currentTheme);
+            await setDoc(doc(db, "users", name), { username: name, theme: state.currentTheme, appData: {} }, { merge: true });
+            location.reload();
+        };
+
+        // ── التاريخ ──────────────────────────────
+        window.changeDate = (d) => {
+            const dt = new Date(state.currentDate);
+            dt.setDate(dt.getDate() - d);
+            state.currentDate = dt.toISOString().split('T')[0];
+            updateDashboardUI();
+        };
+
+        // ── الصلوات ──────────────────────────────
+        window.togglePrayer = (key, type) => {
+            if (!state.appData[state.currentDate]) state.appData[state.currentDate] = { prayers: {} };
+            if (!state.appData[state.currentDate].prayers) state.appData[state.currentDate].prayers = {};
+            if (!state.appData[state.currentDate].prayers[key]) state.appData[state.currentDate].prayers[key] = {};
+            state.appData[state.currentDate].prayers[key][type] = !state.appData[state.currentDate].prayers[key][type];
+            markUnsaved(); autoSave(); updateDashboardUI();
+            const btn = document.getElementById(`btn-${key}-${type}`);
+            if (btn) { btn.classList.add('animate-pop'); setTimeout(() => btn.classList.remove('animate-pop'), 350); }
+        };
+
+        // ── الأذكار/العادات ───────────────────────
+        window.toggleHabit = (id) => {
+            if (!state.appData[state.currentDate]) state.appData[state.currentDate] = {};
+            state.appData[state.currentDate][id] = !state.appData[state.currentDate][id];
+            markUnsaved(); autoSave(); updateDashboardUI();
+        };
+
+        // ── عداد الأجزاء ─────────────────────────
+        window.changeJuz = (delta) => {
+            if (!state.appData[state.currentDate]) state.appData[state.currentDate] = {};
+            const next = Math.max(0, Math.min(30, (state.appData[state.currentDate].juzCount || 0) + delta));
+            state.appData[state.currentDate].juzCount = next;
+            markUnsaved(); refreshDashKhatma(); autoSave();
+        };
+
+        // ── الدروس ────────────────────────────────
+        window.addLesson = () => {
+            const inp = document.getElementById('lessonInput');
+            const text = inp?.value?.trim();
+            if (!text) return;
+            if (!state.appData[state.currentDate]) state.appData[state.currentDate] = {};
+            if (!state.appData[state.currentDate].lessons) state.appData[state.currentDate].lessons = [];
+            state.appData[state.currentDate].lessons.push({
+                text, time: new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })
+            });
+            inp.value = '';
+            markUnsaved(); renderLessonsList(); autoSave();
+        };
+        window.removeLesson = (idx) => {
+            if (!state.appData[state.currentDate]?.lessons) return;
+            state.appData[state.currentDate].lessons.splice(idx, 1);
+            markUnsaved(); renderLessonsList(); autoSave();
+        };
+
+        window.onInputChange = () => markUnsaved();
+
+        // ── حفظ / إعادة تعيين ────────────────────
+        window.saveData = saveData;
+        window.goHome = () => {
+            if (confirm('هل تود العودة لتغيير الاسم أو النمط؟')) {
+                document.getElementById('app-container').classList.add('hidden');
+                document.getElementById('welcomeScreen').style.display = 'flex';
+            }
+        };
+        window.resetData = () => {
+            if (confirm('تحذير: سيتم حذف كافة سجلاتك نهائياً. هل أنت متأكد؟')) { localStorage.clear(); location.reload(); }
+        };
+
+        // ── صفحة القرآن ──────────────────────────
+        window.setQuranLogMode = setQuranLogMode;
+        window.adjustQuranPages = adjustQuranPages;
+        window.loadSurah = loadSurah;
+        window.openFullscreenMushaf = openFullscreenMushaf;
+        window.closeFullscreenMushaf = closeFullscreenMushaf;
+        window.fsPrevPage = fsPrevPage;
+        window.fsNextPage = fsNextPage;
+
+        // ── صفحة الأذكار ─────────────────────────
+        window.switchAzkarTab = switchAzkarTab;
+        window.tapAzkar = tapAzkar;
+        window.markAllAzkarDone = markAllAzkarDone;
+
+        // ── صفحة الدعاء ──────────────────────────
+        window.selectCity = selectCity;
+        window.copyDua = copyDua;
+
+        // ════════════════════════════════════════
+        //  بدء التطبيق
+        // ════════════════════════════════════════
+        function init() {
+            if (state.currentUser) {
+                fetchData();
+            } else {
+                document.getElementById('loadingScreen')?.classList.add('hidden');
+                document.getElementById('welcomeScreen').style.display = 'flex';
+            }
+        }
+        init();
+    </script>
+
+
+    <!-- ════════════════════════════════════
+     نجوم الخلفية + نجوم ساقطة
+     ════════════════════════════════════ -->
+    <script>
+        (function () {
+            // ── Honor reduced-motion preference ──
+            const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            const canvas = document.getElementById('starCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d', { alpha: true });
+            let stars = [], W = 0, H = 0, raf = null;
+            let frameCount = 0;
+            // Throttle: draw every 2nd frame (~30fps) instead of 60fps
+            const FRAME_SKIP = prefersReduced ? 4 : 2;
+
+            function resize() {
+                W = canvas.width = window.innerWidth;
+                H = canvas.height = window.innerHeight;
+                buildStars();
+            }
+            function buildStars() {
+                stars = [];
+                // Fewer stars on small/mobile screens, cap lower for performance
+                const count = Math.min(Math.floor((W * H) / (W < 600 ? 5500 : 3500)), W < 600 ? 120 : 200);
+                for (let i = 0; i < count; i++) {
+                    const colorIdx = i % 3;
+                    stars.push({
+                        x: Math.random() * W, y: Math.random() * H * 0.7,
+                        r: Math.random() * 1.8 + 0.4, a: Math.random() * 0.6 + 0.3,
+                        da: (Math.random() * 0.008 + 0.003) * (Math.random() > .5 ? 1 : -1),
+                        c: colorIdx, hasGlow: false // pre-compute, set below
+                    });
+                    stars[stars.length - 1].hasGlow = stars[stars.length - 1].r > 1.2;
+                }
+            }
+
+            // Pre-compute theme once per visibility change, not per frame
+            let isFemale = false;
+            function updateTheme() { isFemale = document.body.classList.contains('theme-female'); }
+
+            function draw() {
+                frameCount++;
+                if (frameCount % FRAME_SKIP !== 0) { raf = requestAnimationFrame(draw); return; }
+                ctx.clearRect(0, 0, W, H);
+                for (let i = 0, len = stars.length; i < len; i++) {
+                    const s = stars[i];
+                    s.a += s.da;
+                    if (s.a > 1) { s.a = 1; s.da = -s.da; }
+                    else if (s.a < 0.15) { s.a = 0.15; s.da = -s.da; }
+                    ctx.beginPath();
+                    ctx.arc(s.x, s.y, s.r, 0, 6.2832); // Math.PI*2 = 6.2832
+                    if (isFemale) {
+                        ctx.fillStyle = `rgba(240,171,252,${s.a * .7})`;
+                    } else if (s.c === 0) {
+                        ctx.fillStyle = `rgba(186,230,253,${s.a * .85})`;
+                    } else if (s.c === 1) {
+                        ctx.fillStyle = `rgba(196,181,253,${s.a * .8})`;
+                    } else {
+                        ctx.fillStyle = `rgba(224,231,255,${s.a * .9})`;
+                    }
+                    ctx.fill();
+                    if (s.hasGlow) {
+                        const gr = s.r * 3.5;
+                        const grd = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, gr);
+                        grd.addColorStop(0, isFemale
+                            ? `rgba(240,171,252,${s.a * .18})`
+                            : s.c === 1 ? `rgba(192,132,252,${s.a * .2})` : `rgba(56,189,248,${s.a * .2})`);
+                        grd.addColorStop(1, 'transparent');
+                        ctx.beginPath(); ctx.arc(s.x, s.y, gr, 0, 6.2832);
+                        ctx.fillStyle = grd; ctx.fill();
+                    }
+                }
+                raf = requestAnimationFrame(draw);
+            }
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) { cancelAnimationFrame(raf); raf = null; }
+                else { updateTheme(); raf = requestAnimationFrame(draw); }
+            });
+            let resizeTimer;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(resize, 300);
+            });
+            updateTheme();
+            resize();
+            // Static rendering if reduced motion
+            if (prefersReduced) {
+                // Draw once, no animation loop
+                frameCount = FRAME_SKIP - 1; // force next draw
+                const drawOnce = () => { frameCount++; ctx.clearRect(0, 0, W, H); for (const s of stars) { ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 6.2832); ctx.fillStyle = isFemale ? `rgba(240,171,252,${s.a * .7})` : `rgba(186,230,253,${s.a * .85})`; ctx.fill(); } };
+                drawOnce();
+            } else {
+                draw();
+            }
+
+            // ── نجوم ساقطة — skip in reduced-motion ──
+            if (!prefersReduced) {
+                function spawnShootingStar() {
+                    const el = document.createElement('div');
+                    el.className = 'shooting-star';
+                    const sx = Math.random() * W * .7 + W * .15;
+                    const sy = Math.random() * H * .35 + 55;
+                    const dur = Math.random() * 1600 + 1000;
+                    el.style.cssText = `top:${sy}px;left:${sx}px;animation-duration:${dur}ms;`;
+                    document.body.appendChild(el);
+                    setTimeout(() => el.remove(), dur + 100);
+                }
+                function scheduleShoot() {
+                    setTimeout(() => {
+                        if (!document.hidden) spawnShootingStar();
+                        scheduleShoot();
+                    }, Math.random() * 7000 + 5000);
+                }
+                scheduleShoot();
+            }
+        })();
+    </script>
+
+</body>
+
+</html>

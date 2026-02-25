@@ -1,0 +1,897 @@
+/* ═══════════════════════════════════════
+   main.css — الأنماط المشتركة · Black & Cyan V11
+   ══════════════════════════════════════ */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    overscroll-behavior: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100dvh;
+}
+
+/* ═══════════════════════════════
+   الثيم الرجالي — Black & Cyan
+   ═══════════════════════════════ */
+.theme-male {
+    background: #000000;
+    position: relative;
+    font-family: 'IBM Plex Sans Arabic', sans-serif;
+}
+
+/* ── Subtle top glow ── */
+.theme-male::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 50% 25% at 50% -5%, rgba(56, 189, 248, 0.06) 0%, transparent 55%),
+        radial-gradient(ellipse 30% 18% at 20% 5%, rgba(56, 189, 248, 0.03) 0%, transparent 50%),
+        radial-gradient(circle 500px at 80% 85%, rgba(56, 189, 248, 0.02) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ── Floating sparkle dots ── */
+.theme-male::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+        radial-gradient(2px 2px at 18% 22%, rgba(56, 189, 248, 0.3), transparent),
+        radial-gradient(1.5px 1.5px at 65% 15%, rgba(56, 189, 248, 0.2), transparent),
+        radial-gradient(1px 1px at 42% 38%, rgba(56, 189, 248, 0.15), transparent),
+        radial-gradient(2px 2px at 85% 45%, rgba(56, 189, 248, 0.2), transparent),
+        radial-gradient(1px 1px at 30% 62%, rgba(56, 189, 248, 0.15), transparent),
+        radial-gradient(1.5px 1.5px at 72% 72%, rgba(56, 189, 248, 0.18), transparent),
+        radial-gradient(1px 1px at 55% 88%, rgba(56, 189, 248, 0.12), transparent);
+    background-size: 220% 220%, 200% 200%, 180% 180%, 210% 210%, 190% 190%, 230% 230%, 200% 200%;
+    animation: twinkleStars 10s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.4;
+}
+
+@keyframes twinkleStars {
+
+    0%,
+    100% {
+        opacity: 0.4;
+    }
+
+    33% {
+        opacity: 0.7;
+    }
+
+    66% {
+        opacity: 0.5;
+    }
+}
+
+/* ═══════════════════════════════
+   الثيم البناتي
+   ═══════════════════════════════ */
+.theme-female {
+    background-color: #100620;
+    background-image: radial-gradient(ellipse 80% 40% at 50% 0%, rgba(240, 171, 252, 0.08) 0%, transparent 65%);
+    font-family: 'Alexandria', sans-serif;
+}
+
+/* ═══════════════════════════════
+   البطاقات الزجاجية — Glass Cards
+   ═══════════════════════════════ */
+.glass-panel {
+    background: rgba(8, 8, 8, 0.88);
+    backdrop-filter: blur(32px) saturate(180%);
+    -webkit-backdrop-filter: blur(32px) saturate(180%);
+    border: 1px solid rgba(56, 189, 248, 0.12);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.7),
+        0 1px 0 rgba(56, 189, 248, 0.06) inset;
+    border-radius: 24px;
+    position: relative;
+}
+
+.glass-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 24px;
+    padding: 1px;
+    background: linear-gradient(135deg,
+            rgba(56, 189, 248, 0.15) 0%,
+            rgba(56, 189, 248, 0.06) 30%,
+            transparent 60%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+}
+
+.theme-male .glass-panel {
+    background: rgba(6, 6, 6, 0.92);
+    border-color: rgba(56, 189, 248, 0.14);
+    box-shadow:
+        0 12px 48px rgba(0, 0, 0, 0.8),
+        0 1px 0 rgba(56, 189, 248, 0.08) inset;
+}
+
+.glass-card {
+    background: rgba(34, 13, 58, 0.92);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1.5px solid #d946ef;
+    box-shadow: 0 8px 32px rgba(217, 70, 239, 0.13), 0 2px 8px rgba(0, 0, 0, 0.12);
+    border-radius: 18px;
+}
+
+/* ═══════════════════════════════
+   أزرار الصلاة
+   ═══════════════════════════════ */
+.prayer-btn {
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-size: 13px;
+    font-weight: 700;
+    min-width: 68px;
+    min-height: 44px;
+    text-align: center;
+    transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    user-select: none;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.04);
+    position: relative;
+    overflow: hidden;
+}
+
+.prayer-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.1) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity .25s ease;
+}
+
+.prayer-btn:hover::before {
+    opacity: 1;
+}
+
+.prayer-btn:active {
+    transform: scale(0.92) !important;
+}
+
+.btn-fard-done {
+    background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 50%, #0284c7 100%);
+    color: #000;
+    font-weight: 800;
+    border: none;
+    box-shadow: 0 4px 20px rgba(56, 189, 248, 0.45),
+        0 1px 0 rgba(255, 255, 255, 0.25) inset,
+        0 0 25px rgba(56, 189, 248, 0.2);
+}
+
+.btn-fard-done::before {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+    opacity: 1;
+}
+
+.btn-sunnah-done {
+    background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+    color: #000;
+    font-weight: 700;
+    border: none;
+    box-shadow: 0 4px 16px rgba(74, 222, 128, 0.35),
+        0 1px 0 rgba(255, 255, 255, 0.2) inset;
+}
+
+.btn-fard-done-f {
+    background: linear-gradient(135deg, #d946ef 0%, #a21caf 100%);
+    color: #fff;
+    font-weight: 800;
+    border: none;
+    box-shadow: 0 4px 20px rgba(217, 70, 239, 0.4),
+        0 1px 0 rgba(255, 255, 255, 0.2) inset;
+}
+
+.btn-sunnah-done-f {
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+    color: #fff;
+    font-weight: 700;
+    border: none;
+    box-shadow: 0 4px 16px rgba(22, 163, 74, 0.4),
+        0 1px 0 rgba(255, 255, 255, 0.2) inset;
+}
+
+.habit-active-m {
+    background: rgba(56, 189, 248, 0.06);
+    border-color: rgba(56, 189, 248, 0.3);
+    box-shadow: 0 2px 12px rgba(56, 189, 248, 0.1);
+}
+
+.habit-active-f {
+    background: rgba(240, 171, 252, 0.08);
+    border-color: rgba(240, 171, 252, 0.35);
+    box-shadow: 0 2px 12px rgba(240, 171, 252, 0.12);
+}
+
+/* ═══════════════════════════════
+   صف الصلاة
+   ═══════════════════════════════ */
+.prayer-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    background: rgba(255, 255, 255, 0.02);
+    transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.prayer-row.row-done-m {
+    background: rgba(56, 189, 248, 0.05);
+    border-color: rgba(56, 189, 248, 0.18);
+    box-shadow: 0 2px 12px rgba(56, 189, 248, 0.06);
+}
+
+.prayer-row.row-done-f {
+    background: rgba(240, 171, 252, 0.06);
+    border-color: rgba(240, 171, 252, 0.2);
+    box-shadow: 0 2px 12px rgba(240, 171, 252, 0.08);
+}
+
+/* ═══════════════════════════════
+   شبكة التراويح والقيام
+   ═══════════════════════════════ */
+.taraweeh-qiyam-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.night-prayer-card {
+    padding: 18px 12px;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.night-prayer-card:active {
+    transform: scale(0.96);
+}
+
+/* ═══════════════════════════════
+   إحصاءات الأداء
+   ═══════════════════════════════ */
+.perf-stat-card {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 18px;
+    padding: 16px 12px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    transition: all .3s ease;
+}
+
+.perf-stat-card:hover {
+    background: rgba(56, 189, 248, 0.03);
+    border-color: rgba(56, 189, 248, 0.08);
+}
+
+.perf-stat-val {
+    font-size: 2rem;
+    font-weight: 800;
+    font-family: 'Amiri', serif;
+    line-height: 1.1;
+    margin: 6px 0;
+}
+
+.perf-bar-wrap {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 99px;
+    overflow: hidden;
+    margin-top: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.perf-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 8px currentColor;
+}
+
+.progress-ring circle {
+    transition: stroke-dashoffset 2.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ═══════════════════════════════
+   تبويبات الأذكار
+   ═══════════════════════════════ */
+.azkar-tab-btn {
+    flex: 1;
+    padding: 12px 10px;
+    border-radius: 14px;
+    font-family: 'Reem Kufi', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.4);
+    background: transparent;
+    border: none;
+    min-height: 48px;
+}
+
+.azkar-tab-btn.active-m {
+    background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 50%, #0284c7 100%);
+    color: #000;
+    box-shadow: 0 4px 16px rgba(56, 189, 248, 0.3),
+        0 1px 0 rgba(255, 255, 255, 0.15) inset;
+    transform: translateY(-1px);
+}
+
+.azkar-tab-btn.active-f {
+    background: linear-gradient(135deg, #d946ef 0%, #7c3aed 100%);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(217, 70, 239, 0.3),
+        0 1px 0 rgba(255, 255, 255, 0.15) inset;
+    transform: translateY(-1px);
+}
+
+.azkar-item {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 12px;
+    transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.azkar-item:hover {
+    background: rgba(56, 189, 248, 0.02);
+    border-color: rgba(56, 189, 248, 0.06);
+}
+
+/* ═══════════════════════════════
+   شبكة الأجزاء
+   ═══════════════════════════════ */
+.juz-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+}
+
+@media (max-width: 360px) {
+    .juz-grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+
+.juz-btn {
+    aspect-ratio: 1;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    cursor: pointer;
+    transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: 44px;
+}
+
+.juz-btn:hover {
+    background: rgba(56, 189, 248, 0.05);
+    border-color: rgba(56, 189, 248, 0.1);
+}
+
+.juz-btn.done-m {
+    background: rgba(56, 189, 248, 0.12);
+    color: #38bdf8;
+    border-color: rgba(56, 189, 248, 0.35);
+    box-shadow: 0 2px 8px rgba(56, 189, 248, 0.12);
+}
+
+.juz-btn.done-f {
+    background: rgba(217, 70, 239, 0.15);
+    color: #f0abfc;
+    border-color: rgba(217, 70, 239, 0.35);
+    box-shadow: 0 2px 8px rgba(217, 70, 239, 0.15);
+}
+
+/* ═══════════════════════════════
+   إزالة سهام input number
+   ═══════════════════════════════ */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+/* ═══════════════════════════════
+   Toast
+   ═══════════════════════════════ */
+#toast {
+    position: fixed;
+    bottom: 112px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    z-index: 10000;
+    opacity: 0;
+    transition: all .4s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    white-space: nowrap;
+    max-width: 90%;
+}
+
+#toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* ═══════════════════════════════
+   فقاعة الذكر
+   ═══════════════════════════════ */
+.dhikr-float {
+    background: rgba(0, 0, 0, 0.88);
+    backdrop-filter: blur(28px) saturate(160%);
+    -webkit-backdrop-filter: blur(28px) saturate(160%);
+    border: 1px solid rgba(56, 189, 248, 0.15);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8),
+        0 0 30px rgba(56, 189, 248, 0.06);
+}
+
+.theme-male .dhikr-float {
+    background: rgba(0, 0, 0, 0.92);
+    border-color: rgba(56, 189, 248, 0.18);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9),
+        0 0 36px rgba(56, 189, 248, 0.08);
+}
+
+.theme-female .dhikr-float {
+    background: rgba(14, 5, 24, 0.9);
+    border-color: rgba(240, 171, 252, 0.22);
+}
+
+#dhikrText {
+    display: block;
+    will-change: opacity, transform;
+}
+
+/* ═══════════════════════════════
+   زر الحفظ العائم
+   ═══════════════════════════════ */
+.sticky-save {
+    position: fixed;
+    bottom: 92px;
+    left: 50%;
+    transform: translateX(-50%) translateY(16px);
+    z-index: 45;
+    transition: all .4s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    pointer-events: none;
+    will-change: opacity, transform;
+}
+
+.sticky-save.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+}
+
+.unsaved-dot {
+    width: 8px;
+    height: 8px;
+    background: #f87171;
+    border-radius: 50%;
+    display: inline-block;
+    margin-inline-end: 6px;
+    box-shadow: 0 0 10px rgba(248, 113, 113, 0.9),
+        0 0 20px rgba(248, 113, 113, 0.4);
+    animation: blink 1.6s ease-in-out infinite;
+}
+
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.3;
+        transform: scale(0.9);
+    }
+}
+
+/* ═══════════════════════════════
+   الفوانيس
+   ═══════════════════════════════ */
+.lantern-svg {
+    position: absolute;
+    top: -4px;
+    width: 42px;
+    height: 96px;
+    z-index: 40;
+    filter: drop-shadow(0 0 14px rgba(56, 189, 248, 0.4)) drop-shadow(0 0 28px rgba(56, 189, 248, 0.15));
+    opacity: 0.75;
+}
+
+.theme-male .lantern-svg {
+    filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.5)) drop-shadow(0 0 32px rgba(56, 189, 248, 0.2));
+    opacity: 0.8;
+}
+
+/* ═══════════════════════════════
+   نجوم الكانفاس
+   ═══════════════════════════════ */
+#starCanvas {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.85;
+}
+
+.theme-male #starCanvas {
+    opacity: 1;
+}
+
+/* ═══════════════════════════════
+   الهلال
+   ═══════════════════════════════ */
+.crescent-moon {
+    position: fixed;
+    top: 50px;
+    left: 20px;
+    z-index: 2;
+    pointer-events: none;
+    animation: moonFloat 8s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.6)) drop-shadow(0 0 50px rgba(56, 189, 248, 0.2));
+    will-change: transform;
+    transform: scale(1.5);
+}
+
+.theme-female .crescent-moon {
+    filter: drop-shadow(0 0 16px rgba(240, 171, 252, 0.45)) drop-shadow(0 0 36px rgba(240, 171, 252, 0.13));
+    transform: scale(1);
+}
+
+@keyframes moonFloat {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(-5deg) scale(1.5);
+    }
+
+    50% {
+        transform: translateY(-14px) rotate(0deg) scale(1.55);
+    }
+}
+
+/* ═══════════════════════════════
+   مشهد الكعبة
+   ═══════════════════════════════ */
+.kaaba-scene {
+    position: fixed;
+    bottom: 72px;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.04;
+}
+
+.theme-female .kaaba-scene {
+    opacity: 0.048;
+}
+
+/* ═══════════════════════════════
+   نجوم متلألئة
+   ═══════════════════════════════ */
+.sparkle-star {
+    position: fixed;
+    pointer-events: none;
+    z-index: 2;
+    color: #38bdf8;
+    font-size: 10px;
+    animation: twinkle ease-in-out infinite;
+    will-change: opacity, transform;
+    filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.7));
+}
+
+.theme-male .sparkle-star {
+    text-shadow: 0 0 8px rgba(56, 189, 248, 0.8),
+        0 0 16px rgba(56, 189, 248, 0.3);
+}
+
+.theme-female .sparkle-star {
+    color: #f0abfc;
+    filter: drop-shadow(0 0 3px rgba(240, 171, 252, 0.6));
+}
+
+@keyframes twinkle {
+
+    0%,
+    100% {
+        opacity: 0.2;
+        transform: scale(0.8) rotate(0deg);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.6) rotate(180deg);
+    }
+}
+
+/* ═══════════════════════════════
+   نجوم ساقطة
+   ═══════════════════════════════ */
+.shooting-star {
+    position: fixed;
+    pointer-events: none;
+    z-index: 3;
+    width: 3px;
+    height: 3px;
+    background: linear-gradient(90deg, #38bdf8 0%, rgba(56, 189, 248, 0.4) 50%, transparent 100%);
+    border-radius: 50%;
+    opacity: 0;
+    animation: shoot linear forwards;
+    will-change: opacity, transform;
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.9),
+        0 0 16px rgba(56, 189, 248, 0.4);
+}
+
+@keyframes shoot {
+    0% {
+        opacity: 0;
+        transform: translate(0, 0) scaleX(1);
+    }
+
+    5% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-350px, 200px) scaleX(120);
+    }
+}
+
+/* ═══════════════════════════════
+   كرات الخلفية — Orbs
+   ═══════════════════════════════ */
+.bg-orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+    animation: orbPulse 14s ease-in-out infinite;
+    will-change: opacity, transform;
+}
+
+.theme-male .bg-orb {
+    filter: blur(140px);
+}
+
+@keyframes orbPulse {
+
+    0%,
+    100% {
+        opacity: 0.08;
+        transform: scale(1) rotate(0deg)
+    }
+
+    50% {
+        opacity: 0.15;
+        transform: scale(1.15) rotate(5deg)
+    }
+}
+
+/* ═══════════════════════════════
+   حاوية التطبيق
+   ═══════════════════════════════ */
+#app-container {
+    position: relative;
+    z-index: 10;
+    min-height: 100dvh;
+}
+
+#loadingScreen {
+    background: #000000;
+}
+
+/* ═══════════════════════════════
+   شريط التمرير
+   ═══════════════════════════════ */
+::-webkit-scrollbar {
+    width: 2px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(56, 189, 248, 0.2);
+    border-radius: 99px;
+}
+
+/* ═══════════════════════════════
+   select dropdown
+   ═══════════════════════════════ */
+select {
+    color: white;
+    font-family: 'Reem Kufi', sans-serif;
+}
+
+select option {
+    background: #0a0a0a;
+    color: white;
+    padding: 12px;
+    font-family: 'Reem Kufi', sans-serif;
+    font-size: 15px;
+}
+
+.theme-female select option {
+    background: #220d3a;
+}
+
+/* ═══════════════════════════════
+   شاشة الترحيب
+   ═══════════════════════════════ */
+.selected-male {
+    border-color: rgba(56, 189, 248, 0.65) !important;
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.2),
+        0 4px 16px rgba(56, 189, 248, 0.08);
+    transform: scale(1.02);
+}
+
+.selected-female {
+    border-color: rgba(217, 70, 239, 0.7) !important;
+    box-shadow: 0 0 24px rgba(217, 70, 239, 0.2),
+        0 4px 16px rgba(217, 70, 239, 0.15);
+    transform: scale(1.02);
+}
+
+/* ═══════════════════════════════
+   شريط التنقل
+   ═══════════════════════════════ */
+.nav-item {
+    min-width: 56px;
+    min-height: 52px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.nav-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%) scaleX(0);
+    width: 32px;
+    height: 3px;
+    background: currentColor;
+    border-radius: 0 0 3px 3px;
+    transition: transform .3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-item.text-sky-400::before,
+.nav-item.text-fuchsia-400::before {
+    transform: translateX(-50%) scaleX(1);
+}
+
+button {
+    min-height: 40px;
+}
+
+.sunnah-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+
+/* ═══════════════════════════════
+   حقل الإدخال المرئي
+   ═══════════════════════════════ */
+.highlight-input {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    color: #ffffff !important;
+    border-radius: 14px;
+    padding: 14px;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 100%;
+    outline: none;
+}
+
+.highlight-input:focus {
+    background-color: rgba(56, 189, 248, 0.03) !important;
+    border-color: rgba(56, 189, 248, 0.3) !important;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4),
+        0 0 0 3px rgba(56, 189, 248, 0.06);
+}
+
+.highlight-input::placeholder {
+    color: rgba(255, 255, 255, 0.22) !important;
+}
+
+/* ═══════════════════════════════
+   Reduced Motion — Accessibility
+   ═══════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    .animate-float,
+    .animate-swing,
+    .animate-fade-in,
+    .animate-pop,
+    .shooting-star {
+        animation: none !important;
+    }
+
+    .shooting-star {
+        display: none !important;
+    }
+}
+
+/* ═══════════════════════════════
+   Content Visibility — Skip rendering for hidden views
+   ═══════════════════════════════ */
+#quran-view.hidden,
+#azkar-view.hidden,
+#duaa-view.hidden,
+#dashboard-view.hidden {
+    content-visibility: hidden;
+}
+
+/* CSS Containment for heavy containers */
+.glass-panel,
+.glass-card {
+    contain: layout style paint;
+}
